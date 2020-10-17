@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<%- include partials/header.ejs %>
+<body>
+<%- include partials/navbar.ejs %>
+<div class="container">
+
+    <div>
+        <% for(var i = 0; i < films.length; i++) { %>
+            <% if (i === 0 || i % 3 === 0) { %>
+            <div class="row">
+                <% } %>
+                <div class="col-4">
+                    <div class="card mt-2 mb-2">
+                        <div class="card-header">
+                            <%= films[i].title %>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= films[i].title_orig %></h5>
+                            <p class="card-text">Тривалість
+                                (хв): <%= films[i].duration === 0 ? 'невідомо' : films[i].duration %></p>
+                            <p class="card-text">Рік випуску: <%= films[i].year %></p>
+                            <p class="card-text">Рейтинг
+                                IMDB: <%= films[i].imdb_rating === 0 ? 'невідомо' : films[i].imdb_rating %></p>
+                            <a href="/movie?id=<%= films[i].id%>%>" class="btn btn-primary">Детальніше</a>
+                        </div>
+                    </div>
+                </div>
+                <% if (i === films.length - 1 || i % 3 === 2) { %>
+            </div>
+            <% } %>
+        <% } %>
+    </div>
+
+    <hr>
+    <div>
+        <p>Фільми, щоб підняти настрій
+            Дні починають ставали коротшими та більш холодними. Осінь - це час меланхолії. Що може бути краще, аніж
+            зручно закутатись в покривало, взяти в руки гарячий чай та дивитись фільми для хорошого настрою. Навіть якщо
+            на вас напала хандра і ви втомлені після роботи, вони завжди будуть доречними.
+        </p>
+        <p>
+            Легкі фільми для хорошого настрою роблять дива. Після перегляду з’являється надія, що добро таки переможе і
+            всі будуть жити довго та щасливо.
+        </p>
+        <p>
+            Якщо все набридло , не подобається погода , проблеми на роботі , на душі туго, просто оберіть хороше кіно
+            для підняття настрою на вечір . Через пару годин вам стане значно краще.
+        </p>
+    </div>
+</div>
+</body>
+</html>

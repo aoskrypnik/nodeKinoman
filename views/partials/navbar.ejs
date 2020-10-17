@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Кіноман</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <% if (pageName === "comedy") { %>
+            <li class="nav-item active">
+                <% } else{ %>
+            <li class="nav-item">
+                <% } %>
+                <a class="nav-link" href="/comedy">Комедії</a>
+            </li>
+            <% if (pageName === "romantic") { %>
+            <li class="nav-item active">
+                <% } else{ %>
+            <li class="nav-item">
+                <% } %>
+                <a class="nav-link" href="/romantic">Романтика</a>
+            </li>
+            <% if (pageName === "thriller") { %>
+            <li class="nav-item active">
+                <% } else{ %>
+            <li class="nav-item">
+                <% } %>
+                <a class="nav-link" href="/thriller">Бойовик</a>
+            </li>
+            <% if (pageName === "zombie") { %>
+            <li class="nav-item active">
+                <% } else{ %>
+            <li class="nav-item">
+                <% } %>
+                <a class="nav-link" href="/zombie">Зомбі</a>
+            </li>
+            <% if (pageName === "ukrainian") { %>
+            <li class="nav-item active">
+                <% } else{ %>
+            <li class="nav-item">
+                <% } %>
+                <a class="nav-link" href="/ukrainian">Українське</a>
+            </li>
+            <% if (pageName === "films") { %>
+            <li class="nav-item active">
+                <% } else{ %>
+            <li class="nav-item">
+                <% } %>
+                <a class="nav-link" href="/films">Під настрій</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <a class="btn btn-outline-success my-2 my-sm-0" type="submit" href="/films">Що подивитись</a>
+        </form>
+    </div>
+</nav>
