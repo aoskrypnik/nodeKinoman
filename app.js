@@ -6,9 +6,39 @@ server.set('view engine', 'ejs');
 server.listen(8888);
 server.use(express.static(__dirname + "/public"));
 
+const kinoTeatrApi = 'https://api.kino-teatr.ua/rest';
+
+function getFilms(page, ganreCode, countryCode, callback) {
+    let requestUrl = `${kinoTeatrApi}/films?apiKey=skrypnikukmaeduua`;
+    if (page !== null && page !== undefined) {
+        requestUrl += `&page=${page}`;
+    }
+    if (ganreCode !== null) {
+        requestUrl += `&genre=${ganreCode}`;
+    }
+    if (countryCode !== null) {
+        requestUrl += `&country=${countryCode}`;
+    }
+
+    request(requestUrl, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            let jsonBody = JSON.parse(body);
+            let responseObj = {
+                pageNumber: jsonBody.number,
+                totalPages: jsonBody.totalPages,
+                films: jsonBody.content
+            };
+            callback(responseObj);
+        } else {
+            let responseObj = {films: []};
+            callback(responseObj);
+        }
+    });
+}
+
 server.get('/movie', function (req, res) {
     let id = req.query.id;
-    request(`https://api.kino-teatr.ua/rest/film/${id}?apiKey=skrypnikukmaeduua&size=10`, function (error, response, body) {
+    request(`${kinoTeatrApi}/film/${id}?apiKey=skrypnikukmaeduua`, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             let movie = JSON.parse(body);
             res.render('movie', {pageName: 'movie', movie: movie});
@@ -23,68 +53,38 @@ server.get('/', function (req, res) {
 });
 
 server.get('/comedy', function (req, res) {
-    request('https://api.kino-teatr.ua/rest/films?genre=6&apiKey=skrypnikukmaeduua&size=10', function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let films = JSON.parse(body).content;
-            res.render('comedy', {pageName: 'comedy', films: films});
-        } else {
-            res.render('comedy', {pageName: 'comedy', films: []});
-        }
+    getFilms(req.query.page, 6, null, function(response) {
+        res.render('comedy', {pageName: 'comedy', ...response});
     });
 });
 
 server.get('/romantic', function (req, res) {
-    request('https://api.kino-teatr.ua/rest/films?genre=31&apiKey=skrypnikukmaeduua&size=10', function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let films = JSON.parse(body).content;
-            res.render('romantic', {pageName: 'romantic', films: films});
-        } else {
-            res.render('romantic', {pageName: 'romantic', films: []});
-        }
+    getFilms(req.query.page, 31, null, function(response) {
+        res.render('romantic', {pageName: 'romantic', ...response});
     });
 });
 
 server.get('/thriller', function (req, res) {
-    request('https://api.kino-teatr.ua/rest/films?genre=10&apiKey=skrypnikukmaeduua&size=10', function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let films = JSON.parse(body).content;
-            res.render('thriller', {pageName: 'thriller', films: films});
-        } else {
-            res.render('thriller', {pageName: 'thriller', films: []});
-        }
+    getFilms(req.query.page, 10, null, function(response) {
+        res.render('thriller', {pageName: 'thriller', ...response});
     });
 });
 
 server.get('/ukrainian', function (req, res) {
-    request('https://api.kino-teatr.ua/rest/films?country=29&apiKey=skrypnikukmaeduua&size=10', function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let films = JSON.parse(body).content;
-            res.render('ukrainian', {pageName: 'ukrainian', films: films});
-        } else {
-            res.render('ukrainian', {pageName: 'ukrainian', films: []});
-        }
+    getFilms(req.query.page, null, 29, function(response) {
+        res.render('ukrainian', {pageName: 'ukrainian', ...response});
     });
 });
 
 server.get('/zombie', function (req, res) {
-    request('https://api.kino-teatr.ua/rest/films?genre=89&apiKey=skrypnikukmaeduua&size=10', function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let films = JSON.parse(body).content;
-            res.render('zombie', {pageName: 'zombie', films: films});
-        } else {
-            res.render('zombie', {pageName: 'zombie', films: []});
-        }
+    getFilms(req.query.page, 89, null, function(response) {
+        res.render('zombie', {pageName: 'zombie', ...response});
     });
 });
 
 server.get('/films', function (req, res) {
-    request('https://api.kino-teatr.ua/rest/films?apiKey=skrypnikukmaeduua&size=10', function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let films = JSON.parse(body).content;
-            res.render('films', {pageName: 'films', films: films});
-        } else {
-            res.render('films', {pageName: 'films', films: []});
-        }
+    getFilms(req.query.page, null, null, function(response) {
+        res.render('films', {pageName: 'films', ...response});
     });
 });
 
