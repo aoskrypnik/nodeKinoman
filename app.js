@@ -1,6 +1,15 @@
 const express = require('express');
 const server = express();
 const request = require('request');
+const mysql = require("mysql2");
+
+const pool = mysql.createPool({
+    connectionLimit: 5,
+    host: "91.239.233.90",
+    database: "xfinklcm_KinoteatrFilms",
+    user: "xfinklcm_films_admin",
+    password: "G]g~f7gVz^>])@8#"
+});
 
 server.set('view engine', 'ejs');
 server.listen(8888);
