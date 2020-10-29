@@ -58,10 +58,14 @@ function getFilms(page, genreCode, countryCode, callback) {
     });
 }
 
+server.get('/search', function (req, res) {
+    res.json({name: req.query.filmName});
+});
+
 server.get('/movie', function (req, res) {
     let id = req.query.id;
     let sqlQuery =
-        `SELECT * `+
+        `SELECT * ` +
         `FROM Films ` +
         `WHERE Id = ${id}`;
 
