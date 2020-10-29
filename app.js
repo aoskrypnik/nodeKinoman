@@ -17,31 +17,40 @@ server.use(express.static(__dirname + "/public"));
 
 const kinoTeatrApi = 'https://api.kino-teatr.ua/rest';
 
+const FILMS_PER_PAGE = 10;
+
 function getFilms(page, ganreCode, countryCode, callback) {
-    let requestUrl = `${kinoTeatrApi}/films?apiKey=skrypnikukmaeduua`;
-    if (page !== null && page !== undefined) {
-        requestUrl += `&page=${page}`;
-    }
-    if (ganreCode !== null) {
-        requestUrl += `&genre=${ganreCode}`;
-    }
-    if (countryCode !== null) {
-        requestUrl += `&country=${countryCode}`;
+    if (page === null || page === undefined) {
+        page = 0;
     }
 
-    request(requestUrl, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let jsonBody = JSON.parse(body);
-            let responseObj = {
-                pageNumber: jsonBody.number,
-                totalPages: jsonBody.totalPages,
-                films: jsonBody.content
-            };
-            callback(responseObj);
-        } else {
-            let responseObj = {films: []};
-            callback(responseObj);
+    let sqlQuery =
+        `SELECT * ` +
+        `FROM Films ` +
+        `LIMIT ${FILMS_PER_PAGE} OFFSET ${page * FILMS_PER_PAGE}`;
+
+    if (ganreCode !== null) {
+
+    }
+    if (countryCode !== null) {
+
+    }
+
+    pool.execute(sqlQuery, function (err, results) {
+        if (err) {
+            console.error(err);
+            callback({films: []});
         }
+
+        let responseObj = {
+            pageNumber: page,
+            totalPages: 48550 / FILMS_PER_PAGE,
+            films: results
+        };
+
+        console.log(responseObj);
+
+        callback(responseObj);
     });
 }
 
@@ -98,5 +107,5 @@ server.get('/films', function (req, res) {
 });
 
 server.get('*', function(req, res){
-    res.send('what???', 404);
+    res.status(404).send('what???');
 });
