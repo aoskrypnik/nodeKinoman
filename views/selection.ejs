@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<%- include partials/header.ejs %>
+<body>
+<%- include partials/navbar.ejs %>
+
+<div class="container">
+    <form class="mt-5">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="yearMin">Рік від</label>
+                <input type="number" class="form-control" id="yearMin" name="yearMin" min="1900" max="2020"
+                       placeholder="Рік від">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="yearMax">Рік до</label>
+                <input type="number" class="form-control" id="yearMax" name="yearMax" min="1900" max="2020"
+                       placeholder="Рік до">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="ratingMin">Рік від</label>
+                <input type="number" class="form-control" name="ratingMin" min="0" max="10" placeholder="Рейтинг від">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="ratingMax">Рік до</label>
+                <input type="number" class="form-control" name="ratingMax" min="0" max="10" placeholder="Рейтинг до">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputState">Жанр</label>
+                <select id="inputState" class="form-control">
+                    <% for (var i = 0; i < genres.length; i++) { %>
+                        <option name="<%= genres[i].Id %>"> 
+                            <%= genres[i].Name %>
+                        </option>
+                    <% } %>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputState">Країна</label>
+                <select id="inputState" class="form-control">
+                    <% for (var i = 0; i < countries.length; i++) { %>
+                        <option name="<%= countries[i].Id %>"> 
+                            <%= countries[i].Name %>
+                        </option>
+                    <% } %>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputState">Настрій</label>
+                <select id="inputState" class="form-control">
+                    <% for (var i = 0; i < moods.length; i++) { %>
+                        <option name="<%= moods[i].Name %>"> 
+                            <%= moods[i].Name %>
+                        </option>
+                    <% } %>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Знайти</button>
+    </form>
+</div>
+</body>
+</html>

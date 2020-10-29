@@ -15,6 +15,7 @@ server.listen(8888);
 server.use(express.static(__dirname + "/public"));
 
 const FILMS_PER_PAGE = 6;
+const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
 
 function getFilms(page, genreCode, countryCode, callback) {
     if (page === null || page === undefined) {
@@ -132,6 +133,31 @@ server.get('/zombie', function (req, res) {
 server.get('/films', function (req, res) {
     getFilms(req.query.page, null, null, function (response) {
         res.render('films', {pageName: 'films', ...response});
+    });
+});
+
+server.get('/selection', function (req, res) {
+    let countriesPromise = new Promise(function (resolve, reject) {
+        pool.execute(`SELECT * FROM Countries`, function (err, results) {
+            if (err) reject.error(err);
+            resolve(results);
+        });
+    });
+
+    countriesPromise.then(function (countries) {
+        let genresPromise = new Promise(function (resolve, reject) {
+            pool.execute(`SELECT * FROM Genres`, function (err, results) {
+                if (err) reject.error(err);
+                resolve(results);
+            });
+        });
+
+        genresPromise.then(function (genres) {
+            console.log(countries);
+            console.log(genres);
+            console.log(moods);
+            res.render('selection', {pageName: 'selection', countries: countries, genres: genres, moods: moods});
+        });
     });
 });
 
