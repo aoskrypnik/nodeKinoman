@@ -19,22 +19,29 @@ const kinoTeatrApi = 'https://api.kino-teatr.ua/rest';
 
 const FILMS_PER_PAGE = 6;
 
-function getFilms(page, ganreCode, countryCode, callback) {
+function getFilms(page, genreCode, countryCode, callback) {
     if (page === null || page === undefined) {
         page = 0;
     }
 
     let sqlQuery =
         `SELECT * ` +
-        `FROM Films ` +
-        `LIMIT ${FILMS_PER_PAGE} OFFSET ${page * FILMS_PER_PAGE}`;
-
-    if (ganreCode !== null) {
-
+        `FROM Films `;
+    if (genreCode !== null && genreCode !== undefined) {
+        sqlQuery +=
+            `WHERE Id IN (SELECT FilmId ` +
+            `             FROM FilmGenres ` +
+            `             WHERE GenreId = ${genreCode}) `;
     }
-    if (countryCode !== null) {
-
+    if (countryCode !== null && countryCode !== undefined) {
+        sqlQuery += genreCode !== null && genreCode !== undefined ? 'AND ' : 'WHERE ';
+        sqlQuery +=
+            `Id IN (SELECT FilmId ` +
+            `       FROM FilmCountries ` +
+            `       WHERE CountryId = ${countryCode}) `;
     }
+
+    sqlQuery += `LIMIT ${FILMS_PER_PAGE} OFFSET ${page * FILMS_PER_PAGE} `;
 
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
@@ -44,11 +51,9 @@ function getFilms(page, ganreCode, countryCode, callback) {
 
         let responseObj = {
             pageNumber: page,
-            totalPages: 48550 / FILMS_PER_PAGE,
+            totalPages: 47946 / FILMS_PER_PAGE,
             films: results
         };
-
-        // console.log(responseObj);
 
         callback(responseObj);
     });
