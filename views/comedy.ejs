@@ -5,32 +5,32 @@
 <%- include partials/navbar.ejs %>
 <div class="container">
 
-    <div>
-        <% for(var i = 0; i < films.length; i++) { %>
-            <% if (i === 0 || i % 3 === 0) { %>
-            <div class="row">
-                <% } %>
-                <div class="col-4">
-                    <div class="card mt-2 mb-2">
-                        <div class="card-header">
-                            <%= films[i].title %>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title"><%= films[i].title_orig %></h5>
-                            <p class="card-text">Тривалість
-                                (хв): <%= films[i].duration === 0 ? 'невідомо' : films[i].duration %></p>
-                            <p class="card-text">Рік випуску: <%= films[i].year %></p>
-                            <p class="card-text">Рейтинг
-                                IMDB: <%= films[i].imdb_rating === 0 ? 'невідомо' : films[i].imdb_rating %></p>
-                            <a href="/movie?id=<%= films[i].id%>%>" class="btn btn-primary">Детальніше</a>
-                        </div>
-                    </div>
-                </div>
-                <% if (i === films.length - 1 || i % 3 === 2) { %>
-            </div>
-            <% } %>
-        <% } %>
+    <script>
+        $(document).ready(function () {
+            $('.page-link').on('click', function () {
+                let pageNum = $(this).text() - 1;
+                $.ajax({
+                    url: `/pageable?pageNum=${pageNum}&genreCode=6`, success: function (result) {
+                        $('.changeable').html(result);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <div class="changeable">
+        <%- include partials/filmList.ejs %>
     </div>
+
+    <nav aria-label="Page navigation example center">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">5</a></li>
+        </ul>
+    </nav>
 
     <hr>
     <div>

@@ -17,7 +17,7 @@ server.use(express.static(__dirname + "/public"));
 
 const kinoTeatrApi = 'https://api.kino-teatr.ua/rest';
 
-const FILMS_PER_PAGE = 10;
+const FILMS_PER_PAGE = 6;
 
 function getFilms(page, ganreCode, countryCode, callback) {
     if (page === null || page === undefined) {
@@ -48,7 +48,7 @@ function getFilms(page, ganreCode, countryCode, callback) {
             films: results
         };
 
-        console.log(responseObj);
+        // console.log(responseObj);
 
         callback(responseObj);
     });
@@ -66,46 +66,58 @@ server.get('/movie', function (req, res) {
     });
 });
 
+server.get('/pageable', function (req, res) {
+    console.log("Called pageable");
+    console.log(req.query.genreCode);
+    console.log(req.query.countryCode);
+    getFilms(req.query.pageNum, req.query.genreCode, req.query.countryCode, function (response) {
+        res.render('partials/filmList', {pageName: 'films', ...response}, function (err, html) {
+            if (err) return res.sendStatus(500);
+            res.send(html);
+        });
+    });
+});
+
 server.get('/', function (req, res) {
     res.render('index', {pageName: 'kinoman'});
 });
 
 server.get('/comedy', function (req, res) {
-    getFilms(req.query.page, 6, null, function(response) {
+    getFilms(req.query.page, 6, null, function (response) {
         res.render('comedy', {pageName: 'comedy', ...response});
     });
 });
 
 server.get('/romantic', function (req, res) {
-    getFilms(req.query.page, 31, null, function(response) {
+    getFilms(req.query.page, 31, null, function (response) {
         res.render('romantic', {pageName: 'romantic', ...response});
     });
 });
 
 server.get('/thriller', function (req, res) {
-    getFilms(req.query.page, 10, null, function(response) {
+    getFilms(req.query.page, 10, null, function (response) {
         res.render('thriller', {pageName: 'thriller', ...response});
     });
 });
 
 server.get('/ukrainian', function (req, res) {
-    getFilms(req.query.page, null, 29, function(response) {
+    getFilms(req.query.page, null, 29, function (response) {
         res.render('ukrainian', {pageName: 'ukrainian', ...response});
     });
 });
 
 server.get('/zombie', function (req, res) {
-    getFilms(req.query.page, 89, null, function(response) {
+    getFilms(req.query.page, 89, null, function (response) {
         res.render('zombie', {pageName: 'zombie', ...response});
     });
 });
 
 server.get('/films', function (req, res) {
-    getFilms(req.query.page, null, null, function(response) {
+    getFilms(req.query.page, null, null, function (response) {
         res.render('films', {pageName: 'films', ...response});
     });
 });
 
-server.get('*', function(req, res){
+server.get('*', function (req, res) {
     res.status(404).send('what???');
 });

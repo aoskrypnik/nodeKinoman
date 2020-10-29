@@ -5,31 +5,8 @@
 <%- include partials/navbar.ejs %>
 <div class="container">
 
-    <div>
-        <% for(var i = 0; i < films.length; i++) { %>
-            <% if (i === 0 || i % 3 === 0) { %>
-            <div class="row">
-                <% } %>
-                <div class="col-4">
-                    <div class="card mt-2 mb-2">
-                        <div class="card-header">
-                            <%= films[i].title %>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title"><%= films[i].title_orig %></h5>
-                            <p class="card-text">Тривалість
-                                (хв): <%= films[i].duration === 0 ? 'невідомо' : films[i].duration %></p>
-                            <p class="card-text">Рік випуску: <%= films[i].year %></p>
-                            <p class="card-text">Рейтинг
-                                IMDB: <%= films[i].imdb_rating === 0 ? 'невідомо' : films[i].imdb_rating %></p>
-                            <a href="/movie?id=<%= films[i].id %> %>" class="btn btn-primary">Детальніше</a>
-                        </div>
-                    </div>
-                </div>
-                <% if (i === films.length - 1 || i % 3 === 2) { %>
-            </div>
-            <% } %>
-        <% } %>
+    <div class="changeable">
+        <%- include partials/filmList.ejs %>
     </div>
     <hr>
     <div>

@@ -1,0 +1,24 @@
+<% for(var i = 0; i < films.length; i++) { %>
+    <% if (i === 0 || i % 3 === 0) { %>
+    <div class="row">
+        <% } %>
+        <div class="col-4">
+            <div class="card mt-2 mb-2">
+                <div class="card-header">
+                    <%= films[i].Title %>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title"><%= films[i].TitleOriigin %></h5>
+                    <p class="card-text">Тривалість
+                        (хв): <%= films[i].Duration === 0 ? 'невідомо' : films[i].Duration %></p>
+                    <p class="card-text">Рік випуску: <%= films[i].Year %></p>
+                    <p class="card-text">Рейтинг
+                        IMDB: <%= films[i].ImdbRating === 0 ? 'невідомо' : films[i].ImdbRating %></p>
+                    <a href="/movie?id=<%= films[i].Id %> %>" class="btn btn-primary">Детальніше</a>
+                </div>
+            </div>
+        </div>
+        <% if (i === films.length - 1 || i % 3 === 2) { %>
+    </div>
+    <% } %>
+<% } %>
