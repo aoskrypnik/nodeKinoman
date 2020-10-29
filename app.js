@@ -1,6 +1,5 @@
 const express = require('express');
 const server = express();
-const request = require('request');
 const mysql = require("mysql2");
 
 const pool = mysql.createPool({
@@ -14,8 +13,6 @@ const pool = mysql.createPool({
 server.set('view engine', 'ejs');
 server.listen(8888);
 server.use(express.static(__dirname + "/public"));
-
-const kinoTeatrApi = 'https://api.kino-teatr.ua/rest';
 
 const FILMS_PER_PAGE = 6;
 
@@ -41,7 +38,9 @@ function getFilms(page, genreCode, countryCode, callback) {
             `       WHERE CountryId = ${countryCode}) `;
     }
 
-    sqlQuery += `LIMIT ${FILMS_PER_PAGE} OFFSET ${page * FILMS_PER_PAGE} `;
+    sqlQuery +=
+        `ORDER BY RAND() ` +
+        `LIMIT ${FILMS_PER_PAGE} OFFSET ${page * FILMS_PER_PAGE} `;
 
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
@@ -61,13 +60,22 @@ function getFilms(page, genreCode, countryCode, callback) {
 
 server.get('/movie', function (req, res) {
     let id = req.query.id;
-    request(`${kinoTeatrApi}/film/${id}?apiKey=skrypnikukmaeduua`, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let movie = JSON.parse(body);
-            res.render('movie', {pageName: 'movie', movie: movie});
-        } else {
+    let sqlQuery =
+        `SELECT * `+
+        `FROM Films ` +
+        `WHERE Id = ${id}`;
+
+    pool.execute(sqlQuery, function (err, results) {
+        if (err) {
+            console.error(err);
             res.render('movie', {pageName: 'movie', movie: {}});
         }
+
+        if (results.length === 0) {
+            res.status(404).send(`Film with id=${id} not found(`);
+        }
+
+        res.render('movie', {pageName: 'movie', movie: results[0]});
     });
 });
 
