@@ -1,6 +1,7 @@
 const express = require('express');
 const server = express();
 const mysql = require("mysql2");
+const contentful = require('contentful');
 
 const pool = mysql.createPool({
     connectionLimit: 5,
@@ -10,12 +11,27 @@ const pool = mysql.createPool({
     password: "G]g~f7gVz^>])@8#"
 });
 
+const client = contentful.createClient({
+    space: "y6sq3k0yxixi",
+    accessToken: "G1E1yZc6ZijRbL0fiPMpPTWXvlyjxLC4L_Ki9lopZuQ"
+})
+
 server.set('view engine', 'ejs');
 server.listen(8888);
 server.use(express.static(__dirname + "/public"));
 
 const FILMS_PER_PAGE = 6;
 const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
+
+const movieArticles = []
+client.getEntries()
+    .then(function (entries) {
+        // log the title for all the entries that have it
+        entries.items.forEach(function (entry) {
+            movieArticles.push({genre: parseInt(entry.fields.genre, 10), content: entry.fields.articleContent})
+        })
+    })
+
 
 function getFilmsFromDb(filmsCount, genreCode, countryCode, callback) {
     let sqlQuery =
@@ -120,37 +136,48 @@ server.get('/', function (req, res) {
 });
 
 server.get('/comedy', function (req, res) {
-    getFilmsOnPage('comedy', req.query.page, 6, null, function (response) {
-        res.render('comedy', response);
+    const genreCode = 6
+    getFilmsOnPage('comedy', req.query.page, genreCode, null, function (response) {
+        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        res.render('comedy', { articleContent: articleContent, ...response });
     });
 });
 
 server.get('/romantic', function (req, res) {
-    getFilmsOnPage('romantic', req.query.page, 31, null, function (response) {
-        res.render('romantic', response);
+    const genreCode = 31
+    getFilmsOnPage('romantic', req.query.page, genreCode, null, function (response) {
+        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        res.render('romantic', { articleContent: articleContent, ...response });
     });
 });
 
 server.get('/thriller', function (req, res) {
-    getFilmsOnPage('thriller', req.query.page, 10, null, function (response) {
-        res.render('thriller', response);
+    const genreCode = 10
+    getFilmsOnPage('thriller', req.query.page, genreCode, null, function (response) {
+        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        res.render('thriller', { articleContent: articleContent, ...response });
     });
 });
 
 server.get('/ukrainian', function (req, res) {
+    const countryCode = 29
     getFilmsOnPage('ukrainian', req.query.page, null, 29, function (response) {
-        res.render('ukrainian', response);
+        const articleContent = movieArticles.find(article => article.genre === countryCode).content
+        res.render('ukrainian', { articleContent: articleContent, ...response });
     });
 });
 
 server.get('/zombie', function (req, res) {
+    const genreCode = 89
     getFilmsOnPage('zombie', req.query.page, 89, null, function (response) {
+        const articleContent = movieArticles.find(article => article.genre === genreCode).content
         res.render('zombie', response);
     });
 });
 
 server.get('/films', function (req, res) {
     getFilmsOnPage('films', req.query.page, null, null, function (response) {
+        const articleContent = movieArticles.find(article => article.genre === 0).content
         res.render('films', response);
     });
 });
