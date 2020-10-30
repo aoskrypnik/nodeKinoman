@@ -263,7 +263,14 @@ server.get('/selection/form', function (req, res) {
         });
 
         genresPromise.then(function (genres) {
-            res.render('selection', {pageName: 'selection', countries: countries, genres: genres, moods: moods});
+            res.render('selection', {
+                pageName: 'selection',
+                pageTitle: 'пошук фільм',
+                metaDescription: 'Ця сторінк дозволяє знайти фільм за жанр, країна, рейтнг',
+                countries: countries,
+                genres: genres,
+                moods: moods
+            });
         });
     });
 });
