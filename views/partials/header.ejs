@@ -14,19 +14,17 @@
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <% if (metaDescription !== undefined && metaDescription !== null) { %>
-        <meta name="description" content="<% metaDescription %>">
+        <meta name="description" content="<%= metaDescription %>">
     <% } else { %>
-        <meta name="description"
-              content="Кіноман – сайт, де можна знайти фільми під настрій, включаючи комедія, бойовик, трилер, українське кіно, романтика, зомбі">
+        <meta name="description" content="Kinoman">
     <% } %>
     <% if (pageTitle !== undefined && pageTitle !== null) { %>
         <title>
-            <% pageTitle %>
+            <%= pageTitle %>
         </title>
     <% } else { %>
         <title>Кіноман</title>
     <% } %>
-    <title>Кіноман</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>

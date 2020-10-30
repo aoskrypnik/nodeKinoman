@@ -4,8 +4,33 @@
 <body>
 <%- include partials/navbar.ejs %>
 
+<script>
+    $(document).ready(function () {
+        $('#searchPls').on('click', function () {
+            let genre = $('#selectGenre').find(":selected").val();
+            console.log("genre " + genre);
+            let country = $('#selectCountry').find(":selected").val();
+            console.log("country " + country);
+            let mood = $('#selectMood').find(":selected").val();
+            console.log("mood " + mood);
+            let yearMin = $('#yearMin').val();
+            console.log("yearMin " + yearMin);
+            let yearMax = $('#yearMax').val();
+            console.log("yearMax " + yearMax);
+            let ratingMin = $('#ratingMin').val();
+            console.log("ratingMin " + ratingMin);
+            $.ajax({
+                url: `/selection?genre=${genre}&country=${country}&mood=${mood}&yearMin=${yearMin}&yearMax=${yearMax}&ratingMin=${ratingMin}`,
+                success: function (result) {
+                    $('.searchResult').html(result);
+                }
+            });
+        });
+    });
+</script>
+
 <div class="container">
-    <form class="mt-5" action="/selection">
+    <form class="mt-5">
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="yearMin">Рік від</label>
@@ -19,14 +44,14 @@
             </div>
             <div class="form-group col-md-4">
                 <label for="ratingMin">Мінімальний рейтинг</label>
-                <input type="number" class="form-control" name="ratingMin" min="0" max="10"
+                <input type="number" class="form-control" id="ratingMin" name="ratingMin" min="0" max="10"
                        placeholder="Мінімальний рейтинг">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="inputState">Жанр</label>
-                <select id="inputState" class="form-control">
+                <select id="selectGenre" class="form-control">
                     <option name="genre" value="" selected>
                         не обрано
                     </option>
@@ -39,7 +64,7 @@
             </div>
             <div class="form-group col-md-4">
                 <label for="inputState">Країна</label>
-                <select id="inputState" class="form-control">
+                <select id="selectCountry" class="form-control">
                     <option name="country" value="" selected>
                         не обрано
                     </option>
@@ -52,7 +77,7 @@
             </div>
             <div class="form-group col-md-4">
                 <label for="inputState">Настрій</label>
-                <select id="inputState" class="form-control">
+                <select id="selectMood" class="form-control">
                     <option name="mood" value="" selected>
                         не обрано
                     </option>
@@ -64,8 +89,12 @@
                 </select>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Знайти</button>
+        <div class="text-center">
+            <button type="button" id="searchPls" class="btn btn-outline-success mb-2">Знайти</button>
+        </div>
     </form>
+    <div class="searchResult">
+    </div>
 </div>
 </body>
 </html>

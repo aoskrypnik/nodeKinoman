@@ -206,13 +206,13 @@ server.get('/selection', function (req, res) {
     console.log("country " + req.query.country);
     console.log("genre " + req.query.genre);
     console.log("mood " + req.query.mood);
-    if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '') {
+    if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '' || req.query.yearMin === 'undefined') {
         req.query.yearMin = 0;
     }
-    if (req.query.yearMax === null || req.query.yearMax === undefined || req.query.yearMax === '') {
+    if (req.query.yearMax === null || req.query.yearMax === undefined || req.query.yearMax === '' || req.query.yearMax === 'undefined') {
         req.query.yearMax = 2021;
     }
-    if (req.query.ratingMin === null || req.query.ratingMin === undefined || req.query.ratingMin === '') {
+    if (req.query.ratingMin === null || req.query.ratingMin === undefined || req.query.ratingMin === '' || req.query.ratingMin === 'undefined') {
         req.query.ratingMin = 0;
     }
 
@@ -229,7 +229,7 @@ server.get('/selection', function (req, res) {
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
             console.error(err);
-            res.json([]);
+            res.send('not found');
         }
 
         if (results.length >= 6) {
@@ -238,10 +238,19 @@ server.get('/selection', function (req, res) {
             for (let i = 0; i < 6; i++) {
                 finalResults.push(results[ids[i]]);
             }
-            console.log(finalResults);
-            res.json(finalResults);
+            res.render('partials/filmList', {films: finalResults}, function (err, html) {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                res.send(html);
+            });
         } else {
-            res.json(results);
+            res.render('partials/filmList', results, function (err, html) {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                res.send(html);
+            });
         }
     });
 });
