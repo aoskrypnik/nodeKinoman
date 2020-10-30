@@ -15,10 +15,11 @@ server.listen(8888);
 server.use(express.static(__dirname + "/public"));
 
 const FILMS_PER_PAGE = 6;
+const FILMS_AMOUNT = 47946;
 const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
 
 function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callback) {
-    if(searchQuery === null || searchQuery === undefined) {
+    if (searchQuery === null || searchQuery === undefined) {
         searchQuery = "";
     }
 
@@ -56,12 +57,13 @@ function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callbac
 
 let lastPageName = "";
 let lastFilms = [];
+
 function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, callback) {
     if (page === null || page === undefined) {
         page = 0;
     }
 
-    if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName )) {
+    if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName)) {
         getFilmsFromDb(5 * FILMS_PER_PAGE, searchQuery, genreCode, countryCode, function (response) {
             lastFilms = response;
             lastPageName = pageName;
@@ -69,7 +71,7 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
             callback({
                 pageName: pageName,
                 pageNumber: page,
-                totalPages: 47946 / FILMS_PER_PAGE,
+                totalPages: FILMS_AMOUNT / FILMS_PER_PAGE,
                 films: lastFilms.slice(FILMS_PER_PAGE * parseInt(page), FILMS_PER_PAGE * (parseInt(page) + 1)),
             });
         });
@@ -77,7 +79,7 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
         callback({
             pageName: pageName,
             pageNumber: page,
-            totalPages: 47946 / FILMS_PER_PAGE,
+            totalPages: FILMS_AMOUNT / FILMS_PER_PAGE,
             films: lastFilms.slice(FILMS_PER_PAGE * parseInt(page), FILMS_PER_PAGE * (parseInt(page) + 1)),
         });
     }
@@ -163,14 +165,20 @@ server.get('/films', function (req, res) {
 });
 
 server.get('/selection', function (req, res) {
+    console.log("yearMin " + req.query.yearMin);
+    console.log("yearMax " + req.query.yearMax);
+    console.log("ratingMin " + req.query.ratingMin);
+    console.log("country " + req.query.country);
+    console.log("genre " + req.query.genre);
+    console.log("mood " + req.query.mood);
     if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '') {
         req.query.yearMin = 0;
     }
     if (req.query.yearMax === null || req.query.yearMax === undefined || req.query.yearMax === '') {
         req.query.yearMax = 2021;
     }
-    if (req.query.ratingMax === null || req.query.ratingMax === undefined || req.query.ratingMax === '') {
-        req.query.ratingMax = 0;
+    if (req.query.ratingMin === null || req.query.ratingMin === undefined || req.query.ratingMin === '') {
+        req.query.ratingMin = 0;
     }
 
     let sqlQuery =
@@ -178,18 +186,28 @@ server.get('/selection', function (req, res) {
         `FROM Films ` +
         `WHERE Year >= ${req.query.yearMin} AND ` +
         `      Year <= ${req.query.yearMax} AND ` +
-        `      ImdbRating >= ${req.query.ratingMax} ` +
-        `ORDER BY TotalShows DESC`;
+        `      ImdbRating >= ${req.query.ratingMin} ` +
+        `ORDER BY TotalShows DESC LIMIT 50`;
 
     console.log(sqlQuery);
 
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
             console.error(err);
-            res.render('selection', {pageName: 'selection', movie: {}});
+            res.json([]);
         }
 
-        res.render('selection', {pageName: 'movie', films: results});
+        if (results.length >= 6) {
+            let ids = randomSort(results.length);
+            let finalResults = [];
+            for (let i = 0; i < 6; i++) {
+                finalResults.push(results[ids[i]]);
+            }
+            console.log(finalResults);
+            res.json(finalResults);
+        } else {
+            res.json(results);
+        }
     });
 });
 
@@ -214,6 +232,18 @@ server.get('/selection/form', function (req, res) {
         });
     });
 });
+
+function randomSort(num) {
+    let ar = [];
+    for (let i = 0; i < num; i++) {
+        ar[i] = i;
+    }
+
+    ar.sort(function () {
+        return Math.random() - 0.5;
+    });
+    return ar;
+}
 
 server.get('*', function (req, res) {
     res.status(404).send('what???');
