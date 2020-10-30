@@ -32,23 +32,27 @@ client.getEntries()
         })
     })
 
+function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callback) {
+    if(searchQuery === null || searchQuery === undefined) {
+        searchQuery = "";
+    }
 
-function getFilmsFromDb(filmsCount, genreCode, countryCode, callback) {
     let sqlQuery =
         `SELECT * ` +
-        `FROM Films `;
+        `FROM Films ` +
+        `WHERE Title LIKE '%${searchQuery}%' `;
+
     if (genreCode !== null && genreCode !== undefined) {
         sqlQuery +=
-            `WHERE Id IN (SELECT FilmId ` +
-            `             FROM FilmGenres ` +
-            `             WHERE GenreId = ${genreCode}) `;
+            `AND Id IN (SELECT FilmId ` +
+            `           FROM FilmGenres ` +
+            `           WHERE GenreId = ${genreCode}) `;
     }
     if (countryCode !== null && countryCode !== undefined) {
-        sqlQuery += genreCode !== null && genreCode !== undefined ? 'AND ' : 'WHERE ';
         sqlQuery +=
-            `Id IN (SELECT FilmId ` +
-            `       FROM FilmCountries ` +
-            `       WHERE CountryId = ${countryCode}) `;
+            `AND Id IN (SELECT FilmId ` +
+            `           FROM FilmCountries ` +
+            `           WHERE CountryId = ${countryCode}) `;
     }
 
     sqlQuery +=
@@ -67,13 +71,13 @@ function getFilmsFromDb(filmsCount, genreCode, countryCode, callback) {
 
 let lastPageName = "";
 let lastFilms = [];
-function getFilmsOnPage(pageName, page, genreCode, countryCode, callback) {
+function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, callback) {
     if (page === null || page === undefined) {
         page = 0;
     }
 
     if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName )) {
-        getFilmsFromDb(5 * FILMS_PER_PAGE, genreCode, countryCode, function (response) {
+        getFilmsFromDb(5 * FILMS_PER_PAGE, searchQuery, genreCode, countryCode, function (response) {
             lastFilms = response;
             lastPageName = pageName;
 
@@ -95,7 +99,9 @@ function getFilmsOnPage(pageName, page, genreCode, countryCode, callback) {
 }
 
 server.get('/search', function (req, res) {
-    res.json({name: req.query.filmName});
+    getFilmsOnPage('search', req.query.page, req.query.filmName, null, null, function (response) {
+        res.json(response);
+    });
 });
 
 server.get('/movie', function (req, res) {
@@ -121,7 +127,7 @@ server.get('/movie', function (req, res) {
 
 // Pagination
 server.get('/pageable', function (req, res) {
-    getFilmsOnPage(null, req.query.pageNum, null, null, function (response) {
+    getFilmsOnPage(null, req.query.pageNum, null, null, null, function (response) {
         res.render('partials/filmList', response, function (err, html) {
             if (err) {
                 return res.sendStatus(500);
@@ -171,18 +177,49 @@ server.get('/zombie', function (req, res) {
     const genreCode = 89
     getFilmsOnPage('zombie', req.query.page, 89, null, function (response) {
         const articleContent = movieArticles.find(article => article.genre === genreCode).content
-        res.render('zombie', response);
+        res.render('zombie', { articleContent: articleContent, ...response });
     });
 });
 
 server.get('/films', function (req, res) {
     getFilmsOnPage('films', req.query.page, null, null, function (response) {
         const articleContent = movieArticles.find(article => article.genre === 0).content
-        res.render('films', response);
+        res.render('films', { articleContent: articleContent, ...response });
     });
 });
 
 server.get('/selection', function (req, res) {
+    if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '') {
+        req.query.yearMin = 0;
+    }
+    if (req.query.yearMax === null || req.query.yearMax === undefined || req.query.yearMax === '') {
+        req.query.yearMax = 2021;
+    }
+    if (req.query.ratingMax === null || req.query.ratingMax === undefined || req.query.ratingMax === '') {
+        req.query.ratingMax = 0;
+    }
+
+    let sqlQuery =
+        `SELECT * ` +
+        `FROM Films ` +
+        `WHERE Year >= ${req.query.yearMin} AND ` +
+        `      Year <= ${req.query.yearMax} AND ` +
+        `      ImdbRating >= ${req.query.ratingMax} ` +
+        `ORDER BY TotalShows DESC`;
+
+    console.log(sqlQuery);
+
+    pool.execute(sqlQuery, function (err, results) {
+        if (err) {
+            console.error(err);
+            res.render('selection', {pageName: 'selection', movie: {}});
+        }
+
+        res.render('selection', {pageName: 'movie', films: results});
+    });
+});
+
+server.get('/selection/form', function (req, res) {
     let countriesPromise = new Promise(function (resolve, reject) {
         pool.execute(`SELECT * FROM Countries`, function (err, results) {
             if (err) reject.error(err);
@@ -199,9 +236,6 @@ server.get('/selection', function (req, res) {
         });
 
         genresPromise.then(function (genres) {
-            console.log(countries);
-            console.log(genres);
-            console.log(moods);
             res.render('selection', {pageName: 'selection', countries: countries, genres: genres, moods: moods});
         });
     });
