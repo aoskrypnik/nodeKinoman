@@ -163,6 +163,37 @@ server.get('/films', function (req, res) {
 });
 
 server.get('/selection', function (req, res) {
+    if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '') {
+        req.query.yearMin = 0;
+    }
+    if (req.query.yearMax === null || req.query.yearMax === undefined || req.query.yearMax === '') {
+        req.query.yearMax = 2021;
+    }
+    if (req.query.ratingMax === null || req.query.ratingMax === undefined || req.query.ratingMax === '') {
+        req.query.ratingMax = 0;
+    }
+
+    let sqlQuery =
+        `SELECT * ` +
+        `FROM Films ` +
+        `WHERE Year >= ${req.query.yearMin} AND ` +
+        `      Year <= ${req.query.yearMax} AND ` +
+        `      ImdbRating >= ${req.query.ratingMax} ` +
+        `ORDER BY TotalShows DESC`;
+
+    console.log(sqlQuery);
+
+    pool.execute(sqlQuery, function (err, results) {
+        if (err) {
+            console.error(err);
+            res.render('selection', {pageName: 'selection', movie: {}});
+        }
+
+        res.render('selection', {pageName: 'movie', films: results});
+    });
+});
+
+server.get('/selection/form', function (req, res) {
     let countriesPromise = new Promise(function (resolve, reject) {
         pool.execute(`SELECT * FROM Countries`, function (err, results) {
             if (err) reject.error(err);
@@ -179,9 +210,6 @@ server.get('/selection', function (req, res) {
         });
 
         genresPromise.then(function (genres) {
-            console.log(countries);
-            console.log(genres);
-            console.log(moods);
             res.render('selection', {pageName: 'selection', countries: countries, genres: genres, moods: moods});
         });
     });
