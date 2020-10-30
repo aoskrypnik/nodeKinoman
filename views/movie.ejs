@@ -8,8 +8,10 @@
         <div class="card-header">
             <%= movie.Title %>
         </div>
-        <div class="card-body">
-            <%= movie.Description %>
+        <div class="card-body row">
+            <div class="col-12 col-sm-4"><img class="img-fluid" alt="<%= movie.Title %>"
+                                    src="https://image.tmdb.org/t/p/w1280/<%= movie.PosterImg %>"/></div>
+            <div class="col-12 col-sm-8"><%- movie.Description %></div>
         </div>
     </div>
 </div>
