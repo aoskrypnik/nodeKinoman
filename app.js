@@ -17,22 +17,27 @@ server.use(express.static(__dirname + "/public"));
 const FILMS_PER_PAGE = 6;
 const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
 
-function getFilmsFromDb(filmsCount, genreCode, countryCode, callback) {
+function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callback) {
+    if(searchQuery === null || searchQuery === undefined) {
+        searchQuery = "";
+    }
+
     let sqlQuery =
         `SELECT * ` +
-        `FROM Films `;
+        `FROM Films ` +
+        `WHERE Title LIKE '%${searchQuery}%' `;
+
     if (genreCode !== null && genreCode !== undefined) {
         sqlQuery +=
-            `WHERE Id IN (SELECT FilmId ` +
-            `             FROM FilmGenres ` +
-            `             WHERE GenreId = ${genreCode}) `;
+            `AND Id IN (SELECT FilmId ` +
+            `           FROM FilmGenres ` +
+            `           WHERE GenreId = ${genreCode}) `;
     }
     if (countryCode !== null && countryCode !== undefined) {
-        sqlQuery += genreCode !== null && genreCode !== undefined ? 'AND ' : 'WHERE ';
         sqlQuery +=
-            `Id IN (SELECT FilmId ` +
-            `       FROM FilmCountries ` +
-            `       WHERE CountryId = ${countryCode}) `;
+            `AND Id IN (SELECT FilmId ` +
+            `           FROM FilmCountries ` +
+            `           WHERE CountryId = ${countryCode}) `;
     }
 
     sqlQuery +=
@@ -51,13 +56,13 @@ function getFilmsFromDb(filmsCount, genreCode, countryCode, callback) {
 
 let lastPageName = "";
 let lastFilms = [];
-function getFilmsOnPage(pageName, page, genreCode, countryCode, callback) {
+function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, callback) {
     if (page === null || page === undefined) {
         page = 0;
     }
 
     if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName )) {
-        getFilmsFromDb(5 * FILMS_PER_PAGE, genreCode, countryCode, function (response) {
+        getFilmsFromDb(5 * FILMS_PER_PAGE, searchQuery, genreCode, countryCode, function (response) {
             lastFilms = response;
             lastPageName = pageName;
 
@@ -79,7 +84,9 @@ function getFilmsOnPage(pageName, page, genreCode, countryCode, callback) {
 }
 
 server.get('/search', function (req, res) {
-    res.json({name: req.query.filmName});
+    getFilmsOnPage('search', req.query.page, req.query.filmName, null, null, function (response) {
+        res.json(response);
+    });
 });
 
 server.get('/movie', function (req, res) {
@@ -105,7 +112,7 @@ server.get('/movie', function (req, res) {
 
 // Pagination
 server.get('/pageable', function (req, res) {
-    getFilmsOnPage(null, req.query.pageNum, null, null, function (response) {
+    getFilmsOnPage(null, req.query.pageNum, null, null, null, function (response) {
         res.render('partials/filmList', response, function (err, html) {
             if (err) {
                 return res.sendStatus(500);
@@ -120,37 +127,37 @@ server.get('/', function (req, res) {
 });
 
 server.get('/comedy', function (req, res) {
-    getFilmsOnPage('comedy', req.query.page, 6, null, function (response) {
+    getFilmsOnPage('comedy', req.query.page, null, 6, null, function (response) {
         res.render('comedy', response);
     });
 });
 
 server.get('/romantic', function (req, res) {
-    getFilmsOnPage('romantic', req.query.page, 31, null, function (response) {
+    getFilmsOnPage('romantic', req.query.page, null, 31, null, function (response) {
         res.render('romantic', response);
     });
 });
 
 server.get('/thriller', function (req, res) {
-    getFilmsOnPage('thriller', req.query.page, 10, null, function (response) {
+    getFilmsOnPage('thriller', req.query.page, null, 10, null, function (response) {
         res.render('thriller', response);
     });
 });
 
 server.get('/ukrainian', function (req, res) {
-    getFilmsOnPage('ukrainian', req.query.page, null, 29, function (response) {
+    getFilmsOnPage('ukrainian', req.query.page, null, null, 29, function (response) {
         res.render('ukrainian', response);
     });
 });
 
 server.get('/zombie', function (req, res) {
-    getFilmsOnPage('zombie', req.query.page, 89, null, function (response) {
+    getFilmsOnPage('zombie', req.query.page, null, 89, null, function (response) {
         res.render('zombie', response);
     });
 });
 
 server.get('/films', function (req, res) {
-    getFilmsOnPage('films', req.query.page, null, null, function (response) {
+    getFilmsOnPage('films', req.query.page, null, null, null, function (response) {
         res.render('films', response);
     });
 });
