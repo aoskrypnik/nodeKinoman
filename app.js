@@ -101,14 +101,19 @@ server.get('/movie', function (req, res) {
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
             console.error(err);
-            res.render('movie', {pageName: 'movie', movie: {}});
+            res.render('movie', {pageName: 'movie', movie: {}, pageTitle: undefined});
         }
 
         if (results.length === 0) {
             res.status(404).send(`Film with id=${id} not found(`);
         }
 
-        res.render('movie', {pageName: 'movie', movie: results[0]});
+        res.render('movie', {
+            pageName: 'movie',
+            movie: results[0],
+            pageTitle: results[0].Title,
+            metaDescription: undefined
+        });
     });
 });
 
@@ -125,42 +130,72 @@ server.get('/pageable', function (req, res) {
 });
 
 server.get('/', function (req, res) {
-    res.render('index', {pageName: 'kinoman'});
+    res.render('index', {pageName: 'kinoman', pageTitle: undefined, metaDescription: undefined});
 });
 
 server.get('/comedy', function (req, res) {
     getFilmsOnPage('comedy', req.query.page, null, 6, null, function (response) {
-        res.render('comedy', response);
+        res.render('comedy', {
+            films: response.films,
+            pageTitle: 'кіно комедії',
+            pageName: 'comedy',
+            metaDescription: 'Ця сторінка про фільми жанр комедія, сміх'
+        });
     });
 });
 
 server.get('/romantic', function (req, res) {
     getFilmsOnPage('romantic', req.query.page, null, 31, null, function (response) {
-        res.render('romantic', response);
+        res.render('romantic', {
+            films: response.films,
+            pageTitle: 'кіно про кохання',
+            pageName: 'romantic',
+            metaDescription: 'Ця сторінка про фільми жанр романтика, любов'
+        });
     });
 });
 
 server.get('/thriller', function (req, res) {
     getFilmsOnPage('thriller', req.query.page, null, 10, null, function (response) {
-        res.render('thriller', response);
+        res.render('thriller', {
+            films: response.films,
+            pageTitle: 'кіно трилери',
+            pageName: 'thriller',
+            metaDescription: 'Ця сторінка про фільми жанр трилер, бойовик'
+        });
     });
 });
 
 server.get('/ukrainian', function (req, res) {
     getFilmsOnPage('ukrainian', req.query.page, null, null, 29, function (response) {
-        res.render('ukrainian', response);
+        res.render('ukrainian', {
+            films: response.films,
+            pageTitle: 'сучасне українське кіно',
+            pageName: 'ukrainian',
+            metaDescription: 'Ця сторінка про фільми українське кіно'
+        });
     });
 });
 
 server.get('/zombie', function (req, res) {
     getFilmsOnPage('zombie', req.query.page, null, 89, null, function (response) {
-        res.render('zombie', response);
+        res.render('zombie', {
+            films: response.films,
+            pageTitle: 'кіно про зомбі',
+            pageName: 'zombie',
+            metaDescription: 'Ця сторінка про фільми жанр зомбі'
+        });
     });
 });
 
 server.get('/films', function (req, res) {
     getFilmsOnPage('films', req.query.page, null, null, null, function (response) {
-        res.render('films', response);
+        res.render('films', {
+            films: response.films,
+            pageTitle: 'кіно під настрій',
+            pageName: 'films',
+            metaDescription: 'Ця сторінка про фільми під настрій'
+        });
     });
 });
 
