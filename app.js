@@ -16,11 +16,7 @@ server.use(express.static(__dirname + "/public"));
 
 const FILMS_PER_PAGE = 6;
 
-function getFilms(page, genreCode, countryCode, callback) {
-    if (page === null || page === undefined) {
-        page = 0;
-    }
-
+function getFilmsFromDb(filmsCount, genreCode, countryCode, callback) {
     let sqlQuery =
         `SELECT * ` +
         `FROM Films `;
@@ -40,7 +36,7 @@ function getFilms(page, genreCode, countryCode, callback) {
 
     sqlQuery +=
         `ORDER BY RAND() ` +
-        `LIMIT ${FILMS_PER_PAGE} OFFSET ${page * FILMS_PER_PAGE} `;
+        `LIMIT ${filmsCount} `;
 
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
@@ -48,14 +44,37 @@ function getFilms(page, genreCode, countryCode, callback) {
             callback({films: []});
         }
 
-        let responseObj = {
+        callback(results);
+    });
+}
+
+let lastPageName = "";
+let lastFilms = [];
+function getFilmsOnPage(pageName, page, genreCode, countryCode, callback) {
+    if (page === null || page === undefined) {
+        page = 0;
+    }
+
+    if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName )) {
+        getFilmsFromDb(5 * FILMS_PER_PAGE, genreCode, countryCode, function (response) {
+            lastFilms = response;
+            lastPageName = pageName;
+
+            callback({
+                pageName: pageName,
+                pageNumber: page,
+                totalPages: 47946 / FILMS_PER_PAGE,
+                films: lastFilms.slice(FILMS_PER_PAGE * parseInt(page), FILMS_PER_PAGE * (parseInt(page) + 1)),
+            });
+        });
+    } else {
+        callback({
+            pageName: pageName,
             pageNumber: page,
             totalPages: 47946 / FILMS_PER_PAGE,
-            films: results
-        };
-
-        callback(responseObj);
-    });
+            films: lastFilms.slice(FILMS_PER_PAGE * parseInt(page), FILMS_PER_PAGE * (parseInt(page) + 1)),
+        });
+    }
 }
 
 server.get('/movie', function (req, res) {
@@ -79,13 +98,13 @@ server.get('/movie', function (req, res) {
     });
 });
 
+// Pagination
 server.get('/pageable', function (req, res) {
-    console.log("Called pageable");
-    console.log(req.query.genreCode);
-    console.log(req.query.countryCode);
-    getFilms(req.query.pageNum, req.query.genreCode, req.query.countryCode, function (response) {
-        res.render('partials/filmList', {pageName: 'films', ...response}, function (err, html) {
-            if (err) return res.sendStatus(500);
+    getFilmsOnPage(null, req.query.pageNum, null, null, function (response) {
+        res.render('partials/filmList', response, function (err, html) {
+            if (err) {
+                return res.sendStatus(500);
+            }
             res.send(html);
         });
     });
@@ -96,38 +115,38 @@ server.get('/', function (req, res) {
 });
 
 server.get('/comedy', function (req, res) {
-    getFilms(req.query.page, 6, null, function (response) {
-        res.render('comedy', {pageName: 'comedy', ...response});
+    getFilmsOnPage('comedy', req.query.page, 6, null, function (response) {
+        res.render('comedy', response);
     });
 });
 
 server.get('/romantic', function (req, res) {
-    getFilms(req.query.page, 31, null, function (response) {
-        res.render('romantic', {pageName: 'romantic', ...response});
+    getFilmsOnPage('romantic', req.query.page, 31, null, function (response) {
+        res.render('romantic', response);
     });
 });
 
 server.get('/thriller', function (req, res) {
-    getFilms(req.query.page, 10, null, function (response) {
-        res.render('thriller', {pageName: 'thriller', ...response});
+    getFilmsOnPage('thriller', req.query.page, 10, null, function (response) {
+        res.render('thriller', response);
     });
 });
 
 server.get('/ukrainian', function (req, res) {
-    getFilms(req.query.page, null, 29, function (response) {
-        res.render('ukrainian', {pageName: 'ukrainian', ...response});
+    getFilmsOnPage('ukrainian', req.query.page, null, 29, function (response) {
+        res.render('ukrainian', response);
     });
 });
 
 server.get('/zombie', function (req, res) {
-    getFilms(req.query.page, 89, null, function (response) {
-        res.render('zombie', {pageName: 'zombie', ...response});
+    getFilmsOnPage('zombie', req.query.page, 89, null, function (response) {
+        res.render('zombie', response);
     });
 });
 
 server.get('/films', function (req, res) {
-    getFilms(req.query.page, null, null, function (response) {
-        res.render('films', {pageName: 'films', ...response});
+    getFilmsOnPage('films', req.query.page, null, null, function (response) {
+        res.render('films', response);
     });
 });
 
