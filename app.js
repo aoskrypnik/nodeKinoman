@@ -15,6 +15,7 @@ server.listen(8888);
 server.use(express.static(__dirname + "/public"));
 
 const FILMS_PER_PAGE = 6;
+const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
 
 function getFilmsFromDb(filmsCount, genreCode, countryCode, callback) {
     let sqlQuery =
@@ -77,10 +78,14 @@ function getFilmsOnPage(pageName, page, genreCode, countryCode, callback) {
     }
 }
 
+server.get('/search', function (req, res) {
+    res.json({name: req.query.filmName});
+});
+
 server.get('/movie', function (req, res) {
     let id = req.query.id;
     let sqlQuery =
-        `SELECT * `+
+        `SELECT * ` +
         `FROM Films ` +
         `WHERE Id = ${id}`;
 
@@ -147,6 +152,31 @@ server.get('/zombie', function (req, res) {
 server.get('/films', function (req, res) {
     getFilmsOnPage('films', req.query.page, null, null, function (response) {
         res.render('films', response);
+    });
+});
+
+server.get('/selection', function (req, res) {
+    let countriesPromise = new Promise(function (resolve, reject) {
+        pool.execute(`SELECT * FROM Countries`, function (err, results) {
+            if (err) reject.error(err);
+            resolve(results);
+        });
+    });
+
+    countriesPromise.then(function (countries) {
+        let genresPromise = new Promise(function (resolve, reject) {
+            pool.execute(`SELECT * FROM Genres`, function (err, results) {
+                if (err) reject.error(err);
+                resolve(results);
+            });
+        });
+
+        genresPromise.then(function (genres) {
+            console.log(countries);
+            console.log(genres);
+            console.log(moods);
+            res.render('selection', {pageName: 'selection', countries: countries, genres: genres, moods: moods});
+        });
     });
 });
 
