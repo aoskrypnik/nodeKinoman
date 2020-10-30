@@ -27,6 +27,9 @@
             <div class="form-group col-md-4">
                 <label for="inputState">Жанр</label>
                 <select id="inputState" class="form-control">
+                    <option name="genre" value="" selected>
+                        не обрано
+                    </option>
                     <% for (var i = 0; i < genres.length; i++) { %>
                         <option name="genre" value="<%= genres[i].Id %>"> 
                             <%= genres[i].Name %>
@@ -37,6 +40,9 @@
             <div class="form-group col-md-4">
                 <label for="inputState">Країна</label>
                 <select id="inputState" class="form-control">
+                    <option name="country" value="" selected>
+                        не обрано
+                    </option>
                     <% for (var i = 0; i < countries.length; i++) { %>
                         <option name="country" value="<%= countries[i].Id %>"> 
                             <%= countries[i].Name %>
@@ -47,6 +53,9 @@
             <div class="form-group col-md-4">
                 <label for="inputState">Настрій</label>
                 <select id="inputState" class="form-control">
+                    <option name="mood" value="" selected>
+                        не обрано
+                    </option>
                     <% for (var i = 0; i < moods.length; i++) { %>
                         <option name="mood" value="<%= moods[i].Name %>"> 
                             <%= moods[i].Name %>
