@@ -17,6 +17,15 @@
                 <p class="card-text">Рік випуску: <%= movie.Year %></p>
                 <p class="card-text">Рейтинг
                     IMDB: <%= movie.ImdbRating === 0 ? 'невідомо' : movie.ImdbRating %></p>
+                <p class="card-text">Бюджет
+                    $: <%= movie.Budget === 0 ? '-' : `${parseInt(movie.Budget)} млн.` %></p>
+
+                <%if (movie.MegogoId != null) { %>
+                    <a class="card-text" href="https://megogo.net/ua/view/<%=movie.MegogoId%>.html">
+                        Дивитись на MEGOGO
+                    </a>
+                <% } %>
+
                 <%- movie.Description %>
             </div>
         </div>
