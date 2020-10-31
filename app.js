@@ -200,11 +200,6 @@ server.get('/films', function (req, res) {
 });
 
 server.get('/selection', function (req, res) {
-    console.log("yearMin " + req.query.yearMin);
-    console.log("yearMax " + req.query.yearMax);
-    console.log("ratingMin " + req.query.ratingMin);
-    console.log("country " + req.query.country);
-    console.log("genre " + req.query.genre);
     console.log("mood " + req.query.mood);
     if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '' || req.query.yearMin === 'undefined') {
         req.query.yearMin = 0;
@@ -213,7 +208,7 @@ server.get('/selection', function (req, res) {
         req.query.yearMax = 2021;
     }
     if (req.query.ratingMin === null || req.query.ratingMin === undefined || req.query.ratingMin === '' || req.query.ratingMin === 'undefined') {
-        req.query.ratingMin = 0;
+        req.query.ratingMin = 5;
     }
 
     let sqlQuery =
@@ -221,8 +216,24 @@ server.get('/selection', function (req, res) {
         `FROM Films ` +
         `WHERE Year >= ${req.query.yearMin} AND ` +
         `      Year <= ${req.query.yearMax} AND ` +
-        `      ImdbRating >= ${req.query.ratingMin} ` +
-        `ORDER BY TotalShows DESC LIMIT 50`;
+        `      ImdbRating >= ${req.query.ratingMin} `;
+
+    if (req.query.country !== null && req.query.country !== undefined && req.query.country !== '' && req.query.country !== 'undefined') {
+        sqlQuery +=
+            `AND Id IN (SELECT FilmId ` +
+            `           FROM FilmCountries ` +
+            `           WHERE CountryId = ${req.query.country}) `;
+    }
+    if (req.query.genre !== null && req.query.genre !== undefined && req.query.genre !== '' && req.query.genre !== 'undefined') {
+        sqlQuery +=
+            `AND Id IN (SELECT FilmId ` +
+            `           FROM FilmGenres ` +
+            `           WHERE GenreId = ${req.query.genre}) `;
+    }
+
+    sqlQuery+=
+        `ORDER BY RAND() ` +
+        `LIMIT 6 `;
 
     console.log(sqlQuery);
 
@@ -232,26 +243,12 @@ server.get('/selection', function (req, res) {
             res.send('not found');
         }
 
-        if (results.length >= 6) {
-            let ids = randomSort(results.length);
-            let finalResults = [];
-            for (let i = 0; i < 6; i++) {
-                finalResults.push(results[ids[i]]);
+        res.render('partials/filmList', {films: results}, function (err, html) {
+            if (err) {
+                return res.sendStatus(500);
             }
-            res.render('partials/filmList', {films: finalResults}, function (err, html) {
-                if (err) {
-                    return res.sendStatus(500);
-                }
-                res.send(html);
-            });
-        } else {
-            res.render('partials/filmList', results, function (err, html) {
-                if (err) {
-                    return res.sendStatus(500);
-                }
-                res.send(html);
-            });
-        }
+            res.send(html);
+        });
     });
 });
 
@@ -283,18 +280,6 @@ server.get('/selection/form', function (req, res) {
         });
     });
 });
-
-function randomSort(num) {
-    let ar = [];
-    for (let i = 0; i < num; i++) {
-        ar[i] = i;
-    }
-
-    ar.sort(function () {
-        return Math.random() - 0.5;
-    });
-    return ar;
-}
 
 server.get('*', function (req, res) {
     res.status(404).send('what???');
