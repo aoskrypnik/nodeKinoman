@@ -5,10 +5,9 @@
         <div class="col-4">
             <div class="card mt-2 mb-2">
                 <div class="card-header">
-                    <%= films[i].Title %>
+                    <h5><%= films[i].Title %></h5>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title"><%= films[i].TitleOriigin %></h5>
                     <p class="card-text">Тривалість
                         (хв): <%= films[i].Duration === 0 ? 'невідомо' : films[i].Duration %></p>
                     <p class="card-text">Рік випуску: <%= films[i].Year %></p>

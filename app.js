@@ -101,12 +101,14 @@ server.get('/movie', function (req, res) {
     pool.execute(sqlQuery, function (err, filmRes) {
         if (err) {
             console.error(err);
-            res.render('movie', {pageName: 'movie', movie: {}, pageTitle: undefined});
+            res.render('movie', {pageName: 'movie', movie: {}, pageTitle: undefined, metaDescription: undefined});
         }
 
         if (filmRes.length === 0) {
             res.status(404).send(`Film with id=${id} not found(`);
         }
+
+        let meta = 'Фільм ' + filmRes[0].Title;
 
         pool.execute(`SELECT Name FROM Genres WHERE Id IN (SELECT GenreId FROM FilmGenres WHERE FilmId=${id})`,
             function (err, genresRes) {
@@ -121,7 +123,7 @@ server.get('/movie', function (req, res) {
                                     genres: genresRes,
                                     countries: countriesRes,
                                     studios: studiosRes,
-                                    metaDescription: undefined
+                                    metaDescription: meta
                                 });
                             });
                     });
@@ -246,6 +248,8 @@ server.get('/selection', function (req, res) {
     sqlQuery+=
         `ORDER BY RAND() ` +
         `LIMIT 6 `;
+
+    console.log(sqlQuery);
 
     pool.execute(sqlQuery, function (err, results) {
         if (err) {

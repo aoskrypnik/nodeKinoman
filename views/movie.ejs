@@ -20,12 +20,24 @@
                 <p class="card-text">Бюджет
                     $: <%= movie.Budget === 0 ? '-' : `${parseInt(movie.Budget)} млн.` %></p>
 
-                <%if (movie.MegogoId != null) { %>
-                    <a class="card-text" href="https://megogo.net/ua/view/<%=movie.MegogoId%>.html">
+                <% if (movie.MegogoId != null) { %>
+                    <a class="card-text" href="https://megogo.net/ua/view/<%= movie.MegogoId %>.html">
                         Дивитись на MEGOGO
                     </a>
                 <% } %>
 
+                <p class="card-text">Жанри:
+                    <% for(var i = 0; i < genres.length; i++) { %>
+                        <%= genres[i].Name %>
+                    <% } %>
+                </p>
+                <p></p>
+                <p class="card-text">Країни:
+                    <% for(var i = 0; i < countries.length; i++) { %>
+                        <%= countries[i].Name %>
+                    <% } %>
+                </p>
+                <p></p>
                 <%- movie.Description %>
             </div>
         </div>
