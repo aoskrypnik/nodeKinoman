@@ -10,8 +10,36 @@
         </div>
         <div class="card-body row">
             <div class="col-12 col-sm-4"><img class="img-fluid" alt="<%= movie.Title %>"
-                                    src="https://image.tmdb.org/t/p/w1280/<%= movie.PosterImg %>"/></div>
-            <div class="col-12 col-sm-8"><%- movie.Description %></div>
+                                              src="https://image.tmdb.org/t/p/w1280/<%= movie.PosterImg %>"/></div>
+            <div class="col-12 col-sm-8">
+                <p class="card-text">Тривалість
+                    (хв): <%= movie.Duration === 0 ? 'невідомо' : movie.Duration %></p>
+                <p class="card-text">Рік випуску: <%= movie.Year %></p>
+                <p class="card-text">Рейтинг
+                    IMDB: <%= movie.ImdbRating === 0 ? 'невідомо' : movie.ImdbRating %></p>
+                <p class="card-text">Бюджет
+                    $: <%= movie.Budget === 0 ? '-' : `${parseInt(movie.Budget)} млн.` %></p>
+
+                <% if (movie.MegogoId != null) { %>
+                    <a class="card-text" href="https://megogo.net/ua/view/<%= movie.MegogoId %>.html">
+                        Дивитись на MEGOGO
+                    </a>
+                <% } %>
+
+                <p class="card-text">Жанри:
+                    <% for(var i = 0; i < genres.length; i++) { %>
+                        <%= genres[i].Name %>
+                    <% } %>
+                </p>
+                <p></p>
+                <p class="card-text">Країни:
+                    <% for(var i = 0; i < countries.length; i++) { %>
+                        <%= countries[i].Name %>
+                    <% } %>
+                </p>
+                <p></p>
+                <%- movie.Description %>
+            </div>
         </div>
     </div>
 </div>

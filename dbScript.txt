@@ -1,0 +1,45 @@
+const request = require('request');
+
+function processFilm(id) {
+    request(`https://api.kino-teatr.ua/rest/film/${id}?apiKey=skrypnikukmaeduua`, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            let b = JSON.parse(body);
+            const sql = `UPDATE Films SET Title=?, TitleOriigin=?, Description=? WHERE Id=?`;
+            pool.query(sql, [b.title, b.title_orig, b.description, b.id],
+                function(err, results) {
+                    if(err) {
+                        console.log(err);
+                    }else{
+                        console.log("Processed film " + b.id);
+                    }
+                });
+
+            b.studios.forEach(el=> {
+                const sql1 = `INSERT INTO FilmStudios (FilmId, StudioId) VALUES (?, ?)`;
+                pool.query(sql1, [b.id, el.id],
+                    function(err, results) {
+                    });
+            });
+
+            b.countries.forEach(el=> {
+                const sql2 = `INSERT INTO FilmCountries (FilmId, CountryId) VALUES (?, ?)`;
+                pool.query(sql2, [b.id, el.id],
+                    function(err, results) {
+                    });
+            });
+
+            b.genres.forEach(el=> {
+                const sql2 = `INSERT INTO FilmGenres (FilmId, GenreId) VALUES (?, ?)`;
+                pool.query(sql2, [b.id, el.id],
+                    function(err, results) {
+                    });
+            });
+        }
+    });
+}
+
+for(let i=0; i< 52400; ++i) {
+    setTimeout(() => {
+        processFilm(i);
+    }, 5000 * parseInt(""+i / 200));
+}
