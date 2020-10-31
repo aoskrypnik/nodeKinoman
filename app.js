@@ -15,10 +15,11 @@ server.listen(8888);
 server.use(express.static(__dirname + "/public"));
 
 const FILMS_PER_PAGE = 6;
+const FILMS_AMOUNT = 47946;
 const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
 
 function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callback) {
-    if(searchQuery === null || searchQuery === undefined) {
+    if (searchQuery === null || searchQuery === undefined) {
         searchQuery = "";
     }
 
@@ -56,12 +57,13 @@ function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callbac
 
 let lastPageName = "";
 let lastFilms = [];
+
 function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, callback) {
     if (page === null || page === undefined) {
         page = 0;
     }
 
-    if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName )) {
+    if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName)) {
         getFilmsFromDb(5 * FILMS_PER_PAGE, searchQuery, genreCode, countryCode, function (response) {
             lastFilms = response;
             lastPageName = pageName;
@@ -69,7 +71,7 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
             callback({
                 pageName: pageName,
                 pageNumber: page,
-                totalPages: 47946 / FILMS_PER_PAGE,
+                totalPages: FILMS_AMOUNT / FILMS_PER_PAGE,
                 films: lastFilms.slice(FILMS_PER_PAGE * parseInt(page), FILMS_PER_PAGE * (parseInt(page) + 1)),
             });
         });
@@ -77,7 +79,7 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
         callback({
             pageName: pageName,
             pageNumber: page,
-            totalPages: 47946 / FILMS_PER_PAGE,
+            totalPages: FILMS_AMOUNT / FILMS_PER_PAGE,
             films: lastFilms.slice(FILMS_PER_PAGE * parseInt(page), FILMS_PER_PAGE * (parseInt(page) + 1)),
         });
     }
@@ -99,14 +101,19 @@ server.get('/movie', function (req, res) {
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
             console.error(err);
-            res.render('movie', {pageName: 'movie', movie: {}});
+            res.render('movie', {pageName: 'movie', movie: {}, pageTitle: undefined});
         }
 
         if (results.length === 0) {
             res.status(404).send(`Film with id=${id} not found(`);
         }
 
-        res.render('movie', {pageName: 'movie', movie: results[0]});
+        res.render('movie', {
+            pageName: 'movie',
+            movie: results[0],
+            pageTitle: results[0].Title,
+            metaDescription: undefined
+        });
     });
 });
 
@@ -123,54 +130,90 @@ server.get('/pageable', function (req, res) {
 });
 
 server.get('/', function (req, res) {
-    res.render('index', {pageName: 'kinoman'});
+    res.render('index', {pageName: 'kinoman', pageTitle: undefined, metaDescription: undefined});
 });
 
 server.get('/comedy', function (req, res) {
     getFilmsOnPage('comedy', req.query.page, null, 6, null, function (response) {
-        res.render('comedy', response);
+        res.render('comedy', {
+            films: response.films,
+            pageTitle: 'кіно комедії',
+            pageName: 'comedy',
+            metaDescription: 'Ця сторінка про фільми жанр комедія, сміх'
+        });
     });
 });
 
 server.get('/romantic', function (req, res) {
     getFilmsOnPage('romantic', req.query.page, null, 31, null, function (response) {
-        res.render('romantic', response);
+        res.render('romantic', {
+            films: response.films,
+            pageTitle: 'кіно про кохання',
+            pageName: 'romantic',
+            metaDescription: 'Ця сторінка про фільми жанр романтика, любов'
+        });
     });
 });
 
 server.get('/thriller', function (req, res) {
     getFilmsOnPage('thriller', req.query.page, null, 10, null, function (response) {
-        res.render('thriller', response);
+        res.render('thriller', {
+            films: response.films,
+            pageTitle: 'кіно трилери',
+            pageName: 'thriller',
+            metaDescription: 'Ця сторінка про фільми жанр трилер, бойовик'
+        });
     });
 });
 
 server.get('/ukrainian', function (req, res) {
     getFilmsOnPage('ukrainian', req.query.page, null, null, 29, function (response) {
-        res.render('ukrainian', response);
+        res.render('ukrainian', {
+            films: response.films,
+            pageTitle: 'сучасне українське кіно',
+            pageName: 'ukrainian',
+            metaDescription: 'Ця сторінка про фільми українське кіно'
+        });
     });
 });
 
 server.get('/zombie', function (req, res) {
     getFilmsOnPage('zombie', req.query.page, null, 89, null, function (response) {
-        res.render('zombie', response);
+        res.render('zombie', {
+            films: response.films,
+            pageTitle: 'кіно про зомбі',
+            pageName: 'zombie',
+            metaDescription: 'Ця сторінка про фільми жанр зомбі'
+        });
     });
 });
 
 server.get('/films', function (req, res) {
     getFilmsOnPage('films', req.query.page, null, null, null, function (response) {
-        res.render('films', response);
+        res.render('films', {
+            films: response.films,
+            pageTitle: 'кіно під настрій',
+            pageName: 'films',
+            metaDescription: 'Ця сторінка про фільми під настрій'
+        });
     });
 });
 
 server.get('/selection', function (req, res) {
-    if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '') {
+    console.log("yearMin " + req.query.yearMin);
+    console.log("yearMax " + req.query.yearMax);
+    console.log("ratingMin " + req.query.ratingMin);
+    console.log("country " + req.query.country);
+    console.log("genre " + req.query.genre);
+    console.log("mood " + req.query.mood);
+    if (req.query.yearMin === null || req.query.yearMin === undefined || req.query.yearMin === '' || req.query.yearMin === 'undefined') {
         req.query.yearMin = 0;
     }
-    if (req.query.yearMax === null || req.query.yearMax === undefined || req.query.yearMax === '') {
+    if (req.query.yearMax === null || req.query.yearMax === undefined || req.query.yearMax === '' || req.query.yearMax === 'undefined') {
         req.query.yearMax = 2021;
     }
-    if (req.query.ratingMax === null || req.query.ratingMax === undefined || req.query.ratingMax === '') {
-        req.query.ratingMax = 0;
+    if (req.query.ratingMin === null || req.query.ratingMin === undefined || req.query.ratingMin === '' || req.query.ratingMin === 'undefined') {
+        req.query.ratingMin = 0;
     }
 
     let sqlQuery =
@@ -178,18 +221,37 @@ server.get('/selection', function (req, res) {
         `FROM Films ` +
         `WHERE Year >= ${req.query.yearMin} AND ` +
         `      Year <= ${req.query.yearMax} AND ` +
-        `      ImdbRating >= ${req.query.ratingMax} ` +
-        `ORDER BY TotalShows DESC`;
+        `      ImdbRating >= ${req.query.ratingMin} ` +
+        `ORDER BY TotalShows DESC LIMIT 50`;
 
     console.log(sqlQuery);
 
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
             console.error(err);
-            res.render('selection', {pageName: 'selection', movie: {}});
+            res.send('not found');
         }
 
-        res.render('selection', {pageName: 'movie', films: results});
+        if (results.length >= 6) {
+            let ids = randomSort(results.length);
+            let finalResults = [];
+            for (let i = 0; i < 6; i++) {
+                finalResults.push(results[ids[i]]);
+            }
+            res.render('partials/filmList', {films: finalResults}, function (err, html) {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                res.send(html);
+            });
+        } else {
+            res.render('partials/filmList', results, function (err, html) {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                res.send(html);
+            });
+        }
     });
 });
 
@@ -210,10 +272,29 @@ server.get('/selection/form', function (req, res) {
         });
 
         genresPromise.then(function (genres) {
-            res.render('selection', {pageName: 'selection', countries: countries, genres: genres, moods: moods});
+            res.render('selection', {
+                pageName: 'selection',
+                pageTitle: 'пошук фільм',
+                metaDescription: 'Ця сторінк дозволяє знайти фільм за жанр, країна, рейтнг',
+                countries: countries,
+                genres: genres,
+                moods: moods
+            });
         });
     });
 });
+
+function randomSort(num) {
+    let ar = [];
+    for (let i = 0; i < num; i++) {
+        ar[i] = i;
+    }
+
+    ar.sort(function () {
+        return Math.random() - 0.5;
+    });
+    return ar;
+}
 
 server.get('*', function (req, res) {
     res.status(404).send('what???');
