@@ -1,3 +1,6 @@
+// import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+
+const html_renderer = require("@contentful/rich-text-html-renderer");
 const express = require('express');
 const server = express();
 const mysql = require("mysql2");
@@ -29,7 +32,7 @@ client.getEntries()
     .then(function (entries) {
         // log the title for all the entries that have it
         entries.items.forEach(function (entry) {
-            movieArticles.push({genre: parseInt(entry.fields.genre, 10), content: entry.fields.articleContent})
+            movieArticles.push({genre: parseInt(entry.fields.genre, 10), content: entry.fields.articleRichContent})
         })
     })
 
@@ -165,7 +168,7 @@ server.get('/', function (req, res) {
 server.get('/comedy', function (req, res) {
     const genreCode = 6
     getFilmsOnPage('comedy', req.query.page, null, genreCode, null, function (response) {
-        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('comedy', {
             articleContent: articleContent,
             films: response.films,
@@ -179,7 +182,7 @@ server.get('/comedy', function (req, res) {
 server.get('/romantic', function (req, res) {
     const genreCode = 31
     getFilmsOnPage('romantic', req.query.page, null, genreCode, null, function (response) {
-        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('romantic', {
             articleContent: articleContent,
             films: response.films,
@@ -193,7 +196,7 @@ server.get('/romantic', function (req, res) {
 server.get('/thriller', function (req, res) {
     const genreCode = 10
     getFilmsOnPage('thriller', req.query.page, null, genreCode, null, function (response) {
-        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('thriller', {
             articleContent: articleContent,
             films: response.films,
@@ -207,7 +210,7 @@ server.get('/thriller', function (req, res) {
 server.get('/ukrainian', function (req, res) {
     const countryCode = 29
     getFilmsOnPage('ukrainian', req.query.page, null, null, countryCode, function (response) {
-        const articleContent = movieArticles.find(article => article.genre === countryCode).content
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
         res.render('ukrainian', {
             articleContent: articleContent,
             films: response.films,
@@ -221,7 +224,7 @@ server.get('/ukrainian', function (req, res) {
 server.get('/zombie', function (req, res) {
     const genreCode = 89
     getFilmsOnPage('zombie', req.query.page, null, genreCode, null, function (response) {
-        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('zombie', {
             articleContent: articleContent,
             films: response.films,
@@ -235,7 +238,7 @@ server.get('/zombie', function (req, res) {
 server.get('/films', function (req, res) {
     const genreCode = 0
     getFilmsOnPage('zombie', req.query.page, null, null, null, function (response) {
-        const articleContent = movieArticles.find(article => article.genre === genreCode).content
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('films', {
             articleContent: articleContent,
             films: response.films,
