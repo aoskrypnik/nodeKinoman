@@ -98,22 +98,34 @@ server.get('/movie', function (req, res) {
         `FROM Films ` +
         `WHERE Id = ${id}`;
 
-    pool.execute(sqlQuery, function (err, results) {
+    pool.execute(sqlQuery, function (err, filmRes) {
         if (err) {
             console.error(err);
             res.render('movie', {pageName: 'movie', movie: {}, pageTitle: undefined});
         }
 
-        if (results.length === 0) {
+        if (filmRes.length === 0) {
             res.status(404).send(`Film with id=${id} not found(`);
         }
 
-        res.render('movie', {
-            pageName: 'movie',
-            movie: results[0],
-            pageTitle: results[0].Title,
-            metaDescription: undefined
-        });
+        pool.execute(`SELECT Name FROM Genres WHERE Id IN (SELECT GenreId FROM FilmGenres WHERE FilmId=${id})`,
+            function (err, genresRes) {
+                pool.execute(`SELECT Name FROM Countries WHERE Id IN (SELECT CountryId FROM FilmCountries WHERE FilmId=${id})`,
+                    function (err, countriesRes) {
+                        pool.execute(`SELECT Name FROM Studios WHERE Id IN (SELECT StudioId FROM FilmStudios WHERE FilmId=${id})`,
+                            function (err, studiosRes) {
+                                res.render('movie', {
+                                    pageName: 'movie',
+                                    movie: filmRes[0],
+                                    pageTitle: filmRes[0].Title,
+                                    genres: genresRes,
+                                    countries: countriesRes,
+                                    studios: studiosRes,
+                                    metaDescription: undefined
+                                });
+                            });
+                    });
+            });
     });
 });
 
@@ -234,8 +246,6 @@ server.get('/selection', function (req, res) {
     sqlQuery+=
         `ORDER BY RAND() ` +
         `LIMIT 6 `;
-
-    console.log(sqlQuery);
 
     pool.execute(sqlQuery, function (err, results) {
         if (err) {
