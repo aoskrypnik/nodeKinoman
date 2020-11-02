@@ -17,7 +17,7 @@ const pool = mysql.createPool({
 const client = contentful.createClient({
     space: "y6sq3k0yxixi",
     accessToken: "G1E1yZc6ZijRbL0fiPMpPTWXvlyjxLC4L_Ki9lopZuQ"
-})
+});
 
 server.set('view engine', 'ejs');
 server.listen(8888);
@@ -27,14 +27,14 @@ const FILMS_PER_PAGE = 6;
 const FILMS_AMOUNT = 47946;
 const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
 
-const movieArticles = []
+const movieArticles = [];
 client.getEntries()
     .then(function (entries) {
         // log the title for all the entries that have it
         entries.items.forEach(function (entry) {
             movieArticles.push({genre: parseInt(entry.fields.genre, 10), content: entry.fields.articleRichContent})
         })
-    })
+    });
 
 function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callback) {
     if (searchQuery === null || searchQuery === undefined) {
@@ -166,85 +166,85 @@ server.get('/', function (req, res) {
 });
 
 server.get('/comedy', function (req, res) {
-    const genreCode = 6
+    const genreCode = 6;
     getFilmsOnPage('comedy', req.query.page, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('comedy', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно комедії',
+            pageTitle: 'Комедії, що варто подивитись. Сервіс підбору фільмів Kinoman',
             pageName: 'comedy',
-            metaDescription: 'Ця сторінка про фільми жанр комедія, сміх'
+            metaDescription: 'Комедії, що варто подивитись, легке кіно та класні комедії на сервісі Kinoman',
         });
     });
 });
 
 server.get('/romantic', function (req, res) {
-    const genreCode = 31
+    const genreCode = 31;
     getFilmsOnPage('romantic', req.query.page, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('romantic', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно про кохання',
+            pageTitle: 'Романтичне кіно про кохання. Мелодрами, фільми про любов. Сервіс підбору фільмів Kinoman',
             pageName: 'romantic',
-            metaDescription: 'Ця сторінка про фільми жанр романтика, любов'
+            metaDescription: 'Підбірка романтичних фільмів про кохання. Сервіс підбору фільмів про любов Kinoman',
         });
     });
 });
 
 server.get('/thriller', function (req, res) {
-    const genreCode = 10
+    const genreCode = 10;
     getFilmsOnPage('thriller', req.query.page, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('thriller', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно трилери',
+            pageTitle: 'Найкращі бойовики. Підбірка фільмів на сервісі Kinoman',
             pageName: 'thriller',
-            metaDescription: 'Ця сторінка про фільми жанр трилер, бойовик'
+            metaDescription: 'Найкращі бойовики та трилери на сервісі підбору фільмів Kinoman',
         });
     });
 });
 
 server.get('/ukrainian', function (req, res) {
-    const countryCode = 29
+    const countryCode = 29;
     getFilmsOnPage('ukrainian', req.query.page, null, null, countryCode, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
         res.render('ukrainian', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'сучасне українське кіно',
+            pageTitle: 'Українські фільми, сучасне українське кіно, на сервісі піідбору фільмів Kinoman',
             pageName: 'ukrainian',
-            metaDescription: 'Ця сторінка про фільми українське кіно'
+            metaDescription: 'Підбірка кращих українських фільмів та сучасного українського кіно. Сервіс підбору фільмів Kinoman',
         });
     });
 });
 
 server.get('/zombie', function (req, res) {
-    const genreCode = 89
+    const genreCode = 89;
     getFilmsOnPage('zombie', req.query.page, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('zombie', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно про зомбі',
+            pageTitle: 'Підбірка фільмів про зомбі на сервісі підбору фільмів Kinoman',
             pageName: 'zombie',
-            metaDescription: 'Ця сторінка про фільми жанр зомбі'
+            metaDescription: 'Фільми про зомбі. Кращі фільми про зомбаків. Сервіс підбору фільмів Kinoman'
         });
     });
 });
 
 server.get('/films', function (req, res) {
-    const genreCode = 0
+    const genreCode = 0;
     getFilmsOnPage('zombie', req.query.page, null, null, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('films', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно під настрій',
+            pageTitle: 'Фільми для гарного настрою, підбірка фільмів на сервісі Kinoman',
             pageName: 'films',
-            metaDescription: 'Ця сторінка про фільми під настрій'
+            metaDescription: 'Фільми на вечір для гарного настрою, підбірка класних фільмів на сервісі Kinoman'
         });
     });
 });
@@ -281,7 +281,7 @@ server.get('/selection', function (req, res) {
             `           WHERE GenreId = ${req.query.genre}) `;
     }
 
-    sqlQuery+=
+    sqlQuery +=
         `ORDER BY RAND() ` +
         `LIMIT 6 `;
 
