@@ -1,6 +1,10 @@
+// import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+
+const html_renderer = require("@contentful/rich-text-html-renderer");
 const express = require('express');
 const server = express();
 const mysql = require("mysql2");
+const contentful = require('contentful');
 
 const pool = mysql.createPool({
     connectionLimit: 5,
@@ -10,6 +14,11 @@ const pool = mysql.createPool({
     password: "G]g~f7gVz^>])@8#"
 });
 
+const client = contentful.createClient({
+    space: "y6sq3k0yxixi",
+    accessToken: "G1E1yZc6ZijRbL0fiPMpPTWXvlyjxLC4L_Ki9lopZuQ"
+})
+
 server.set('view engine', 'ejs');
 server.listen(8888);
 server.use(express.static(__dirname + "/public"));
@@ -17,6 +26,15 @@ server.use(express.static(__dirname + "/public"));
 const FILMS_PER_PAGE = 6;
 const FILMS_AMOUNT = 47946;
 const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
+
+const movieArticles = []
+client.getEntries()
+    .then(function (entries) {
+        // log the title for all the entries that have it
+        entries.items.forEach(function (entry) {
+            movieArticles.push({genre: parseInt(entry.fields.genre, 10), content: entry.fields.articleRichContent})
+        })
+    })
 
 function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callback) {
     if (searchQuery === null || searchQuery === undefined) {
@@ -148,8 +166,11 @@ server.get('/', function (req, res) {
 });
 
 server.get('/comedy', function (req, res) {
-    getFilmsOnPage('comedy', req.query.page, null, 6, null, function (response) {
+    const genreCode = 6
+    getFilmsOnPage('comedy', req.query.page, null, genreCode, null, function (response) {
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('comedy', {
+            articleContent: articleContent,
             films: response.films,
             pageTitle: 'кіно комедії',
             pageName: 'comedy',
@@ -159,8 +180,11 @@ server.get('/comedy', function (req, res) {
 });
 
 server.get('/romantic', function (req, res) {
-    getFilmsOnPage('romantic', req.query.page, null, 31, null, function (response) {
+    const genreCode = 31
+    getFilmsOnPage('romantic', req.query.page, null, genreCode, null, function (response) {
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('romantic', {
+            articleContent: articleContent,
             films: response.films,
             pageTitle: 'кіно про кохання',
             pageName: 'romantic',
@@ -170,8 +194,11 @@ server.get('/romantic', function (req, res) {
 });
 
 server.get('/thriller', function (req, res) {
-    getFilmsOnPage('thriller', req.query.page, null, 10, null, function (response) {
+    const genreCode = 10
+    getFilmsOnPage('thriller', req.query.page, null, genreCode, null, function (response) {
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('thriller', {
+            articleContent: articleContent,
             films: response.films,
             pageTitle: 'кіно трилери',
             pageName: 'thriller',
@@ -181,8 +208,11 @@ server.get('/thriller', function (req, res) {
 });
 
 server.get('/ukrainian', function (req, res) {
-    getFilmsOnPage('ukrainian', req.query.page, null, null, 29, function (response) {
+    const countryCode = 29
+    getFilmsOnPage('ukrainian', req.query.page, null, null, countryCode, function (response) {
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
         res.render('ukrainian', {
+            articleContent: articleContent,
             films: response.films,
             pageTitle: 'сучасне українське кіно',
             pageName: 'ukrainian',
@@ -192,8 +222,11 @@ server.get('/ukrainian', function (req, res) {
 });
 
 server.get('/zombie', function (req, res) {
-    getFilmsOnPage('zombie', req.query.page, null, 89, null, function (response) {
+    const genreCode = 89
+    getFilmsOnPage('zombie', req.query.page, null, genreCode, null, function (response) {
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('zombie', {
+            articleContent: articleContent,
             films: response.films,
             pageTitle: 'кіно про зомбі',
             pageName: 'zombie',
@@ -203,8 +236,11 @@ server.get('/zombie', function (req, res) {
 });
 
 server.get('/films', function (req, res) {
-    getFilmsOnPage('films', req.query.page, null, null, null, function (response) {
+    const genreCode = 0
+    getFilmsOnPage('zombie', req.query.page, null, null, null, function (response) {
+        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('films', {
+            articleContent: articleContent,
             films: response.films,
             pageTitle: 'кіно під настрій',
             pageName: 'films',
