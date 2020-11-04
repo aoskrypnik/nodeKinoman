@@ -172,7 +172,8 @@ server.get('/comedy', function (req, res) {
         res.render('comedy', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Комедії, що варто подивитись. Сервіс підбору фільмів Kinoman',
+            //pageTitle: 'Комедії, що варто подивитись. Сервіс підбору фільмів Kinoman',
+            pageTitle: 'кіно комедії',
             pageName: 'comedy',
             metaDescription: 'Комедії, що варто подивитись, легке кіно та класні комедії на сервісі Kinoman',
         });
@@ -200,7 +201,8 @@ server.get('/thriller', function (req, res) {
         res.render('thriller', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Найкращі бойовики. Підбірка фільмів на сервісі Kinoman',
+            //pageTitle: 'Найкращі бойовики. Підбірка фільмів на сервісі Kinoman',
+            pageTitle: 'кіно бойовик',
             pageName: 'thriller',
             metaDescription: 'Найкращі бойовики та трилери на сервісі підбору фільмів Kinoman',
         });
@@ -228,7 +230,8 @@ server.get('/zombie', function (req, res) {
         res.render('zombie', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Підбірка фільмів про зомбі на сервісі підбору фільмів Kinoman',
+            //pageTitle: 'Підбірка фільмів про зомбі на сервісі підбору фільмів Kinoman',
+            pageTitle: 'кіно зомбі',
             pageName: 'zombie',
             metaDescription: 'Фільми про зомбі. Кращі фільми про зомбаків. Сервіс підбору фільмів Kinoman'
         });

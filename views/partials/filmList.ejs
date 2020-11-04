@@ -1,23 +1,23 @@
-<% for(var i = 0; i < films.length; i++) { %>
-    <% if (i === 0 || i % 3 === 0) { %>
-    <div class="row">
-        <% } %>
-        <div class="col-4">
-            <div class="card mt-2 mb-2">
+<div class="row">
+    <% for(var i = 0; i < films.length; i++) { %>
+        <div class="col-12 col-md-6 col-lg-4 mt-2 mb-2">
+            <div class="card h-100">
                 <div class="card-header">
-                    <h5><%= films[i].Title %></h5>
+                    <h5 class="text-nowrap" style="text-overflow: ellipsis; overflow: hidden"><%= films[i].Title %></h5>
                 </div>
                 <div class="card-body">
+                    <div class="mx-auto mb-4" style="width: 100%; max-width: 150px; height: 225px">
+                        <img class="img-fluid" alt="<%= films[i].Title %>" style="object-fit: cover"
+                             src="https://image.tmdb.org/t/p/w1280/<%= films[i].PosterImg %>"/>
+                    </div>
                     <p class="card-text">Тривалість
                         (хв): <%= films[i].Duration === 0 ? 'невідомо' : films[i].Duration %></p>
                     <p class="card-text">Рік випуску: <%= films[i].Year %></p>
                     <p class="card-text">Рейтинг
                         IMDB: <%= films[i].ImdbRating === 0 ? 'невідомо' : films[i].ImdbRating %></p>
-                    <a href="/movie?id=<%= films[i].Id %> %>" class="btn btn-light">Детальніше</a>
+                    <a href="/movie?id=<%= films[i].Id %> %>" class="btn btn-light w-100">Детальніше</a>
                 </div>
             </div>
         </div>
-        <% if (i === films.length - 1 || i % 3 === 2) { %>
-    </div>
     <% } %>
-<% } %>
+</div>

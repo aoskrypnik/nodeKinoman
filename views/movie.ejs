@@ -21,9 +21,11 @@
                     $: <%= movie.Budget === 0 ? '-' : `${parseInt(movie.Budget)} млн.` %></p>
 
                 <% if (movie.MegogoId != null) { %>
-                    <a class="card-text" href="https://megogo.net/ua/view/<%= movie.MegogoId %>.html">
-                        Дивитись на MEGOGO
-                    </a>
+                    <p class="card-text">
+                        <a class="card-text" href="https://megogo.net/ua/view/<%= movie.MegogoId %>.html">
+                            Дивитись на MEGOGO
+                        </a>
+                    </p>
                 <% } %>
 
                 <p class="card-text">Жанри:
