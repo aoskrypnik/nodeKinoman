@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<%- include partials/header.ejs %>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53BZ5VC"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+<%- include partials/navbar.ejs %>
+<div class="container">
+
+    <script>
+        $(document).ready(function () {
+            $('.page-link').on('click', function () {
+                let pageNum = $(this).text() - 1;
+                $.ajax({
+                    url: `/pageable?pageNum=${pageNum}&genreCode=31`, success: function (result) {
+                        $('.changeable').html(result);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <div class="changeable">
+        <%- include partials/filmList.ejs %>
+    </div>
+
+    <nav aria-label="Page navigation example center">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">5</a></li>
+        </ul>
+    </nav>
+
+    <hr>
+
+    <div>
+        <%- articleContent %>
+    </div>
+</div>
+</body>
+</html>

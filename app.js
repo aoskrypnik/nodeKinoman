@@ -81,7 +81,7 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
         page = 0;
     }
 
-    if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName)) {
+    if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName) || pageName === 'search') {
         getFilmsFromDb(5 * FILMS_PER_PAGE, searchQuery, genreCode, countryCode, function (response) {
             lastFilms = response;
             lastPageName = pageName;
@@ -102,12 +102,6 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
         });
     }
 }
-
-server.get('/search', function (req, res) {
-    getFilmsOnPage('search', req.query.page, req.query.filmName, null, null, function (response) {
-        res.json(response);
-    });
-});
 
 server.get('/movie', function (req, res) {
     let id = req.query.id;
@@ -165,6 +159,18 @@ server.get('/', function (req, res) {
     res.render('index', {pageName: 'kinoman', pageTitle: undefined, metaDescription: undefined});
 });
 
+server.get('/search', function (req, res) {
+    getFilmsOnPage('search', req.query.page, req.query.filmName, null, null, function (response) {
+        res.render('search', {
+            articleContent: '',
+            films: response.films,
+            pageTitle: 'пошук фільму',
+            pageName: 'search',
+            metaDescription: 'Ввести назву фільму',
+        });
+    });
+});
+
 server.get('/comedy', function (req, res) {
     const genreCode = 6;
     getFilmsOnPage('comedy', req.query.page, null, genreCode, null, function (response) {
@@ -172,7 +178,6 @@ server.get('/comedy', function (req, res) {
         res.render('comedy', {
             articleContent: articleContent,
             films: response.films,
-            //pageTitle: 'Комедії, що варто подивитись. Сервіс підбору фільмів Kinoman',
             pageTitle: 'кіно комедії',
             pageName: 'comedy',
             metaDescription: 'Комедії, що варто подивитись, легке кіно та класні комедії на сервісі Kinoman',
@@ -187,7 +192,7 @@ server.get('/romantic', function (req, res) {
         res.render('romantic', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Романтичне кіно про кохання. Мелодрами, фільми про любов. Сервіс підбору фільмів Kinoman',
+            pageTitle: 'Кіно про кохання, мелодрами, фільми про любов. Сервіс підбору Kinoman',
             pageName: 'romantic',
             metaDescription: 'Підбірка романтичних фільмів про кохання. Сервіс підбору фільмів про любов Kinoman',
         });
@@ -201,7 +206,6 @@ server.get('/thriller', function (req, res) {
         res.render('thriller', {
             articleContent: articleContent,
             films: response.films,
-            //pageTitle: 'Найкращі бойовики. Підбірка фільмів на сервісі Kinoman',
             pageTitle: 'кіно бойовик',
             pageName: 'thriller',
             metaDescription: 'Найкращі бойовики та трилери на сервісі підбору фільмів Kinoman',
@@ -216,7 +220,7 @@ server.get('/ukrainian', function (req, res) {
         res.render('ukrainian', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Українські фільми, сучасне українське кіно, на сервісі піідбору фільмів Kinoman',
+            pageTitle: 'Українські фільми на сервісі підбору фільмів Kinoman',
             pageName: 'ukrainian',
             metaDescription: 'Підбірка кращих українських фільмів та сучасного українського кіно. Сервіс підбору фільмів Kinoman',
         });
@@ -230,7 +234,6 @@ server.get('/zombie', function (req, res) {
         res.render('zombie', {
             articleContent: articleContent,
             films: response.films,
-            //pageTitle: 'Підбірка фільмів про зомбі на сервісі підбору фільмів Kinoman',
             pageTitle: 'кіно зомбі',
             pageName: 'zombie',
             metaDescription: 'Фільми про зомбі. Кращі фільми про зомбаків. Сервіс підбору фільмів Kinoman'
