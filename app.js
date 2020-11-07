@@ -122,7 +122,7 @@ server.get('/movie', function (req, res) {
             res.status(404).send(`Film with id=${id} not found(`);
         }
 
-        let meta = 'Фільм ' + filmRes[0].Title;
+        let meta = "Фільм " + filmRes[0].Title + " - дивитись онлайн детальну інформацію та все про фільм: тривалість, рік випуску, рейтинг, бюджет, жанр, країна виробництва та опис";
 
         pool.execute(`SELECT Name FROM Genres WHERE Id IN (SELECT GenreId FROM FilmGenres WHERE FilmId=${id})`,
             function (err, genresRes) {
@@ -151,7 +151,7 @@ server.get('/', function (req, res) {
         res.render('index', {
             pageName: 'kinoman',
             pageTitle: undefined,
-            metaDescription: undefined,
+            metaDescription: "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам",
             canonicalLink: null,
             films: response.films
         });
@@ -166,7 +166,7 @@ server.get('/search', function (req, res) {
             pageTitle: 'пошук фільму',
             pageName: 'search',
             canonicalLink: null,
-            metaDescription: 'Ввести назву фільму',
+            metaDescription: 'Використайте алгоритм підбору фільмів сайту Кіноман та з легкістю підберіть фільм під ваш настрій та інші параметри',
         });
     });
 });
@@ -187,7 +187,7 @@ server.get('/comedy/:pageNum?', function (req, res) {
             pageName: 'comedy',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/comedy' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Комедії, що варто подивитись, легке кіно та класні комедії на сервісі Kinoman',
+            metaDescription: 'Переглядайте підбірку фільмів жанру комедія на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
         });
     });
 });
@@ -208,7 +208,7 @@ server.get('/romantic/:pageNum?', function (req, res) {
             pageName: 'romantic',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/romantic' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Підбірка романтичних фільмів про кохання. Сервіс підбору фільмів про любов Kinoman',
+            metaDescription: 'Переглядайте підбірку романтичних фільмів про кохання на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
         });
     });
 });
@@ -229,7 +229,7 @@ server.get('/thriller/:pageNum?', function (req, res) {
             pageName: 'thriller',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/thriller' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Найкращі бойовики та трилери на сервісі підбору фільмів Kinoman',
+            metaDescription: 'Переглядайте підбірку фільмів жанру бойовик та трилер на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
         });
     });
 });
@@ -250,7 +250,7 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
             pageName: 'ukrainian',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/ukrainian' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Підбірка кращих українських фільмів та сучасного українського кіно. Сервіс підбору фільмів Kinoman',
+            metaDescription: 'Переглядайте підбірку українських фільмів на сайті Кіноман. Вона створена нами та містить кращих представників категорії',
         });
     });
 });
@@ -265,7 +265,7 @@ server.get('/zombie', function (req, res) {
             pageTitle: 'кіно зомбі',
             pageName: 'zombie',
             canonicalLink: null,
-            metaDescription: 'Фільми про зомбі. Кращі фільми про зомбаків. Сервіс підбору фільмів Kinoman'
+            metaDescription: 'Переглядайте підбірку фільмів про зомбі на сайті Кіноман. Вона створена нами та містить кращих представників категорії'
         });
     });
 });
@@ -286,7 +286,7 @@ server.get('/films/:pageNum?', function (req, res) {
             pageName: 'films',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/films' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Фільми на вечір для гарного настрою, підбірка класних фільмів на сервісі Kinoman'
+            metaDescription: 'Переглядайте підбірку фільмів для гарного настрою на сайті Кіноман. Вона створена нами та містить кращих представників категорії'
         });
     });
 });
