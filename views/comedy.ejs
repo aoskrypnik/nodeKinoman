@@ -11,30 +11,22 @@
 <%- include partials/navbar.ejs %>
 <div class="container">
 
-    <script>
-        $(document).ready(function () {
-            $('.page-link').on('click', function () {
-                let pageNum = $(this).text() - 1;
-                $.ajax({
-                    url: `/pageable?pageNum=${pageNum}&genreCode=6`, success: function (result) {
-                        $('.changeable').html(result);
-                    }
-                });
-            });
-        });
-    </script>
-
     <div class="changeable">
         <%- include partials/filmList.ejs %>
     </div>
 
     <nav aria-label="Page navigation example center">
         <ul class="pagination justify-content-center">
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">5</a></li>
+            <li class="page-item <% if (active === 1) { %>active <% } %> >"><a class="page-link" href="/comedy/1">1</a>
+            </li>
+            <li class="page-item <% if (active === 2) { %>active <% } %>"><a class="page-link" href="/comedy/2">2</a>
+            </li>
+            <li class="page-item <% if (active === 3) { %>active <% } %>"><a class="page-link" href="/comedy/3">3</a>
+            </li>
+            <li class="page-item <% if (active === 4) { %>active <% } %>"><a class="page-link" href="/comedy/4">4</a>
+            </li>
+            <li class="page-item <% if (active === 5) { %>active <% } %>"><a class="page-link" href="/comedy/5">5</a>
+            </li>
         </ul>
     </nav>
     <hr>
