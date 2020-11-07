@@ -77,8 +77,10 @@ let lastPageName = "";
 let lastFilms = [];
 
 function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, callback) {
-    if (page === null || page === undefined) {
+    if (page === null || page === undefined ||  page < 1 || page > 5) {
         page = 0;
+    } else {
+        page = page - 1;
     }
 
     if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName) || pageName === 'search') {
@@ -130,6 +132,7 @@ server.get('/movie', function (req, res) {
                             function (err, studiosRes) {
                                 res.render('movie', {
                                     pageName: 'movie',
+                                    canonicalLink: null,
                                     movie: filmRes[0],
                                     pageTitle: filmRes[0].Title,
                                     genres: genresRes,
@@ -149,6 +152,7 @@ server.get('/', function (req, res) {
             pageName: 'kinoman',
             pageTitle: undefined,
             metaDescription: undefined,
+            canonicalLink: null,
             films: response.films
         });
     });
@@ -161,74 +165,91 @@ server.get('/search', function (req, res) {
             films: response.films,
             pageTitle: 'пошук фільму',
             pageName: 'search',
+            canonicalLink: null,
             metaDescription: 'Ввести назву фільму',
         });
     });
 });
 
 server.get('/comedy/:pageNum?', function (req, res) {
+    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+        (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
+        res.redirect('/comedy');
+        return;
+    }
     const genreCode = 6;
-    let num = (req.params.pageNum === undefined || req.params.pageNum === 0 ||
-        req.params.pageNum === null || req.params.pageNum > 4) ? 1 : req.params.pageNum;
-    getFilmsOnPage('comedy', num, null, genreCode, null, function (response) {
+    getFilmsOnPage('comedy', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('comedy', {
             articleContent: articleContent,
             films: response.films,
             pageTitle: 'кіно комедії',
             pageName: 'comedy',
-            active: parseInt(num),
+            canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/comedy' : null,
+            active: response.pageNumber + 1,
             metaDescription: 'Комедії, що варто подивитись, легке кіно та класні комедії на сервісі Kinoman',
         });
     });
 });
 
 server.get('/romantic/:pageNum?', function (req, res) {
+    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+        (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
+        res.redirect('/romantic');
+        return;
+    }
     const genreCode = 31;
-    let num = (req.params.pageNum === undefined || req.params.pageNum === 0 ||
-        req.params.pageNum === null || req.params.pageNum > 4) ? 1 : req.params.pageNum;
-    getFilmsOnPage('romantic', num, null, genreCode, null, function (response) {
+    getFilmsOnPage('romantic', req.query.page, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('romantic', {
             articleContent: articleContent,
             films: response.films,
             pageTitle: 'Кіно про кохання, мелодрами, фільми про любов. Сервіс підбору Kinoman',
             pageName: 'romantic',
-            active: parseInt(num),
+            canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/romantic' : null,
+            active: response.pageNumber + 1,
             metaDescription: 'Підбірка романтичних фільмів про кохання. Сервіс підбору фільмів про любов Kinoman',
         });
     });
 });
 
 server.get('/thriller/:pageNum?', function (req, res) {
+    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+        (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
+        res.redirect('/thriller');
+        return;
+    }
     const genreCode = 10;
-    let num = (req.params.pageNum === undefined || req.params.pageNum === 0 ||
-        req.params.pageNum === null || req.params.pageNum > 4) ? 1 : req.params.pageNum;
-    getFilmsOnPage('thriller', num, null, genreCode, null, function (response) {
+    getFilmsOnPage('thriller', req.query.page, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('thriller', {
             articleContent: articleContent,
             films: response.films,
             pageTitle: 'кіно бойовик',
             pageName: 'thriller',
-            active: parseInt(num),
+            canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/thriller' : null,
+            active: response.pageNumber + 1,
             metaDescription: 'Найкращі бойовики та трилери на сервісі підбору фільмів Kinoman',
         });
     });
 });
 
 server.get('/ukrainian/:pageNum?', function (req, res) {
+    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+        (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
+        res.redirect('/ukrainian');
+        return;
+    }
     const countryCode = 29;
-    let num = (req.params.pageNum === undefined || req.params.pageNum === 0 ||
-        req.params.pageNum === null || req.params.pageNum > 4) ? 1 : req.params.pageNum;
-    getFilmsOnPage('ukrainian', num, null, null, countryCode, function (response) {
+    getFilmsOnPage('ukrainian', req.query.page, null, null, countryCode, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
         res.render('ukrainian', {
             articleContent: articleContent,
             films: response.films,
             pageTitle: 'Українські фільми на сервісі підбору фільмів Kinoman',
             pageName: 'ukrainian',
-            active: parseInt(num),
+            canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/ukrainian' : null,
+            active: response.pageNumber + 1,
             metaDescription: 'Підбірка кращих українських фільмів та сучасного українського кіно. Сервіс підбору фільмів Kinoman',
         });
     });
@@ -243,23 +264,28 @@ server.get('/zombie', function (req, res) {
             films: response.films,
             pageTitle: 'кіно зомбі',
             pageName: 'zombie',
+            canonicalLink: null,
             metaDescription: 'Фільми про зомбі. Кращі фільми про зомбаків. Сервіс підбору фільмів Kinoman'
         });
     });
 });
 
 server.get('/films/:pageNum?', function (req, res) {
+    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+        (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
+        res.redirect('/films');
+        return;
+    }
     const genreCode = 0;
-    let num = (req.params.pageNum === undefined || req.params.pageNum === 0 ||
-        req.params.pageNum === null || req.params.pageNum > 4) ? 1 : req.params.pageNum;
-    getFilmsOnPage('zombie', num, null, null, null, function (response) {
+    getFilmsOnPage('zombie', req.query.page, null, null, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('films', {
             articleContent: articleContent,
             films: response.films,
             pageTitle: 'Фільми для гарного настрою, підбірка фільмів на сервісі Kinoman',
             pageName: 'films',
-            active: parseInt(num),
+            canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/films' : null,
+            active: response.pageNumber + 1,
             metaDescription: 'Фільми на вечір для гарного настрою, підбірка класних фільмів на сервісі Kinoman'
         });
     });
@@ -339,6 +365,7 @@ server.get('/selection/form', function (req, res) {
                 pageName: 'selection',
                 pageTitle: 'пошук фільм',
                 metaDescription: 'Ця сторінк дозволяє знайти фільм за жанр, країна, рейтнг',
+                canonicalLink: null,
                 countries: countries,
                 genres: genres,
                 moods: moods

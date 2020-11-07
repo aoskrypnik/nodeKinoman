@@ -9,7 +9,6 @@
         }
 
         gtag('js', new Date());
-
         gtag('config', 'UA-180751267-1');
     </script>
 
@@ -20,8 +19,8 @@
                 'gtm.start':
                     new Date().getTime(), event: 'gtm.js'
             });
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+            let f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l !== 'dataLayer' ? '&l=' + l : '';
             j.async = true;
             j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
             f.parentNode.insertBefore(j, f);
@@ -41,6 +40,11 @@
     <% } else { %>
         <meta name="description" content="Kinoman">
     <% } %>
+
+    <% if (canonicalLink !== null && canonicalLink !== undefined) { %>
+        <link rel="canonical" href="<%= canonicalLink %>" />
+    <% }%>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
