@@ -77,7 +77,7 @@ let lastPageName = "";
 let lastFilms = [];
 
 function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, callback) {
-    if (page === null || page === undefined ||  page < 1 || page > 5) {
+    if (page === null || page === undefined || page < 1 || page > 5) {
         page = 0;
     } else {
         page = page - 1;
@@ -159,20 +159,21 @@ server.get('/', function (req, res) {
 });
 
 server.get('/search', function (req, res) {
-    getFilmsOnPage('search', req.query.page, req.query.filmName, null, null, function (response) {
+    getFilmsFromDb(100, req.query.filmName, null, null, function (response) {
         res.render('search', {
             articleContent: '',
-            films: response.films,
+            films: response,
             pageTitle: 'пошук фільму',
             pageName: 'search',
             canonicalLink: null,
             metaDescription: 'Ввести назву фільму',
+            searchQuery: req.query.filmName,
         });
     });
 });
 
 server.get('/comedy/:pageNum?', function (req, res) {
-    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+    if (req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
         (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
         res.redirect('/comedy');
         return;
@@ -193,7 +194,7 @@ server.get('/comedy/:pageNum?', function (req, res) {
 });
 
 server.get('/romantic/:pageNum?', function (req, res) {
-    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+    if (req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
         (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
         res.redirect('/romantic');
         return;
@@ -214,7 +215,7 @@ server.get('/romantic/:pageNum?', function (req, res) {
 });
 
 server.get('/thriller/:pageNum?', function (req, res) {
-    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+    if (req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
         (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
         res.redirect('/thriller');
         return;
@@ -235,7 +236,7 @@ server.get('/thriller/:pageNum?', function (req, res) {
 });
 
 server.get('/ukrainian/:pageNum?', function (req, res) {
-    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+    if (req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
         (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
         res.redirect('/ukrainian');
         return;
@@ -271,7 +272,7 @@ server.get('/zombie', function (req, res) {
 });
 
 server.get('/films/:pageNum?', function (req, res) {
-    if(req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
+    if (req.params.pageNum !== null && req.params.pageNum !== undefined && req.params.pageNum &&
         (parseInt(req.params.pageNum) < 2 || parseInt(req.params.pageNum) > 5)) {
         res.redirect('/films');
         return;

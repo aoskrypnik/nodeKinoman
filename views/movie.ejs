@@ -12,19 +12,19 @@
 <div class="container">
     <div class="card mt-2">
         <div class="card-header">
-            <%= movie.Title %>
+            <h1><%= movie.Title %></h1>
         </div>
         <div class="card-body row">
             <div class="col-12 col-sm-4"><img class="img-fluid" alt="<%= movie.Title %>"
                                               src="https://image.tmdb.org/t/p/w1280/<%= movie.PosterImg %>"/></div>
             <div class="col-12 col-sm-8">
                 <p class="card-text">Тривалість
-                    (хв): <%= movie.Duration === 0 ? 'невідомо' : movie.Duration %></p>
+                    (хв): <%= movie.Duration === 0 || movie.Duration === "" || movie.Duration === undefined || movie.Duration === null ? 'невідомо' : movie.Duration %></p>
                 <p class="card-text">Рік випуску: <%= movie.Year %></p>
                 <p class="card-text">Рейтинг
-                    IMDB: <%= movie.ImdbRating === 0 ? 'невідомо' : movie.ImdbRating %></p>
+                    IMDB: <%= movie.ImdbRating === 0 || movie.ImdbRating === "" || movie.ImdbRating === undefined || movie.ImdbRating === null ? 'невідомо' : movie.ImdbRating %></p>
                 <p class="card-text">Бюджет
-                    $: <%= movie.Budget === 0 ? '-' : `${parseInt(movie.Budget)} млн.` %></p>
+                    $: <%= (!isNaN(movie.Budget) && parseInt(movie.Budget) === 0) || movie.Budget === undefined || movie.Budget === null ? 'невідомо' : `${movie.Budget} млн.` %></p>
 
                 <% if (movie.MegogoId != null) { %>
                     <p class="card-text">

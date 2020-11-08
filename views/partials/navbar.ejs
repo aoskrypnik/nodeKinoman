@@ -51,7 +51,8 @@
             </li>
         </ul>
         <form id="searchForm" name="searchForm" action="/search" method="get" class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" name="filmName" placeholder="назва" aria-label="Search">
+            <input pattern=".{3,}" required title="мінімум 3 символи" class="form-control mr-sm-2" type="search"
+                   name="filmName" placeholder="назва" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Пошук</button>
         </form>
     </div>

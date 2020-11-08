@@ -11,28 +11,13 @@
 <%- include partials/navbar.ejs %>
 <div class="container">
 
-    <script>
-        $(document).ready(function () {
-            $('.page-link').on('click', function () {
-                let pageNum = $(this).text() - 1;
-                $.ajax({
-                    url: `/pageable?pageNum=${pageNum}&genreCode=31`, success: function (result) {
-                        $('.changeable').html(result);
-                    }
-                });
-            });
-        });
-    </script>
-
+    <h1>Результати пошуку за назвою "<%= searchQuery %>"
+    </h1>
     <div class="changeable">
         <%- include partials/filmList.ejs %>
     </div>
 
     <hr>
-
-    <div>
-        <%- articleContent %>
-    </div>
 </div>
 </body>
 </html>
