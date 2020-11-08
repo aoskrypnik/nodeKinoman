@@ -122,8 +122,7 @@ server.get('/movie', function (req, res) {
             res.status(404).send(`Film with id=${id} not found(`);
         }
 
-        let meta = 'Фільм ' + filmRes[0].Title;
-
+        let meta = "Фільм " + filmRes[0].Title + " - дивитись онлайн детальну інформацію та все про фільм: тривалість, рік випуску, рейтинг, бюджет, жанр, країна виробництва та опис";
         pool.execute(`SELECT Name FROM Genres WHERE Id IN (SELECT GenreId FROM FilmGenres WHERE FilmId=${id})`,
             function (err, genresRes) {
                 pool.execute(`SELECT Name FROM Countries WHERE Id IN (SELECT CountryId FROM FilmCountries WHERE FilmId=${id})`,
@@ -134,7 +133,7 @@ server.get('/movie', function (req, res) {
                                     pageName: 'movie',
                                     canonicalLink: null,
                                     movie: filmRes[0],
-                                    pageTitle: filmRes[0].Title,
+                                    pageTitle: filmRes[0].Title + " - детальний опис та інформація про фільм жанру " + genresRes[0] + " онлайн",
                                     genres: genresRes,
                                     countries: countriesRes,
                                     studios: studiosRes,
@@ -150,8 +149,8 @@ server.get('/', function (req, res) {
     getFilmsOnPage(null, 0, null, null, null, function (response) {
         res.render('index', {
             pageName: 'kinoman',
-            pageTitle: undefined,
-            metaDescription: undefined,
+            pageTitle: "Кіноман - сервіс підбору та рекомендацій по фільмам",
+            metaDescription: "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам",
             canonicalLink: null,
             films: response.films
         });
@@ -163,10 +162,10 @@ server.get('/search', function (req, res) {
         res.render('search', {
             articleContent: '',
             films: response,
-            pageTitle: 'пошук фільму',
+            pageTitle: 'Пошук фільму - швидкий і зручний підбір фільму за заданини параметрами',
             pageName: 'search',
             canonicalLink: null,
-            metaDescription: 'Ввести назву фільму',
+            metaDescription: 'Використайте алгоритм підбору фільмів сайту Кіноман та з легкістю підберіть фільм під ваш настрій та інші параметри',
             searchQuery: req.query.filmName,
         });
     });
@@ -184,11 +183,11 @@ server.get('/comedy/:pageNum?', function (req, res) {
         res.render('comedy', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно комедії',
+            pageTitle: 'Кіно комедії: онлайн підбірка та рекомендації кращих фільмів жанру',
             pageName: 'comedy',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/comedy' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Комедії, що варто подивитись, легке кіно та класні комедії на сервісі Kinoman',
+            metaDescription: 'Переглядайте підбірку фільмів жанру комедія на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
         });
     });
 });
@@ -205,11 +204,11 @@ server.get('/romantic/:pageNum?', function (req, res) {
         res.render('romantic', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Кіно про кохання, мелодрами, фільми про любов. Сервіс підбору Kinoman',
+            pageTitle: 'Кіно про кохання: онлайн підбірка та рекомендації кращих фільмів жанру',
             pageName: 'romantic',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/romantic' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Підбірка романтичних фільмів про кохання. Сервіс підбору фільмів про любов Kinoman',
+            metaDescription: 'Переглядайте підбірку романтичних фільмів про кохання на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
         });
     });
 });
@@ -226,11 +225,11 @@ server.get('/thriller/:pageNum?', function (req, res) {
         res.render('thriller', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно бойовик',
+            pageTitle: 'Бойовики: онлайн підбірка та рекомендації кращих фільмів жанру',
             pageName: 'thriller',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/thriller' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Найкращі бойовики та трилери на сервісі підбору фільмів Kinoman',
+            metaDescription: 'Переглядайте підбірку фільмів жанру бойовик та трилер на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
         });
     });
 });
@@ -247,11 +246,11 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
         res.render('ukrainian', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Українські фільми на сервісі підбору фільмів Kinoman',
+            pageTitle: 'Українські фільми: онлайн підбірка та рекомендації кращих фільмів жанру',
             pageName: 'ukrainian',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/ukrainian' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Підбірка кращих українських фільмів та сучасного українського кіно. Сервіс підбору фільмів Kinoman',
+            metaDescription: 'Переглядайте підбірку українських фільмів на сайті Кіноман. Вона створена нами та містить кращих представників категорії',
         });
     });
 });
@@ -263,10 +262,10 @@ server.get('/zombie', function (req, res) {
         res.render('zombie', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'кіно зомбі',
+            pageTitle: 'Фільми про зомбі: онлайн підбірка та рекомендації кращих фільмів жанру',
             pageName: 'zombie',
             canonicalLink: null,
-            metaDescription: 'Фільми про зомбі. Кращі фільми про зомбаків. Сервіс підбору фільмів Kinoman'
+            metaDescription: 'Переглядайте підбірку фільмів про зомбі на сайті Кіноман. Вона створена нами та містить кращих представників категорії'
         });
     });
 });
@@ -283,11 +282,11 @@ server.get('/films/:pageNum?', function (req, res) {
         res.render('films', {
             articleContent: articleContent,
             films: response.films,
-            pageTitle: 'Фільми для гарного настрою, підбірка фільмів на сервісі Kinoman',
+            pageTitle: 'Фільми для гарного настрою: онлайн підбірка кращих фільмів жанру',
             pageName: 'films',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/films' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Фільми на вечір для гарного настрою, підбірка класних фільмів на сервісі Kinoman'
+            metaDescription: 'Переглядайте підбірку фільмів для гарного настрою на сайті Кіноман. Вона створена нами та містить кращих представників категорії'
         });
     });
 });
@@ -364,8 +363,8 @@ server.get('/selection/form', function (req, res) {
         genresPromise.then(function (genres) {
             res.render('selection', {
                 pageName: 'selection',
-                pageTitle: 'пошук фільм',
-                metaDescription: 'Ця сторінк дозволяє знайти фільм за жанр, країна, рейтнг',
+                pageTitle: 'Пошук фільму - швидкий і зручний підбір фільму за заданини параметрами',
+                metaDescription: 'Використайте алгоритм підбору фільмів сайту Кіноман та з легкістю підберіть фільм під ваш настрій та інші параметри',
                 canonicalLink: null,
                 countries: countries,
                 genres: genres,
