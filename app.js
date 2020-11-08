@@ -199,7 +199,7 @@ server.get('/romantic/:pageNum?', function (req, res) {
         return;
     }
     const genreCode = 31;
-    getFilmsOnPage('romantic', req.query.page, null, genreCode, null, function (response) {
+    getFilmsOnPage('romantic', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('romantic', {
             articleContent: articleContent,
@@ -220,7 +220,7 @@ server.get('/thriller/:pageNum?', function (req, res) {
         return;
     }
     const genreCode = 10;
-    getFilmsOnPage('thriller', req.query.page, null, genreCode, null, function (response) {
+    getFilmsOnPage('thriller', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('thriller', {
             articleContent: articleContent,
@@ -241,7 +241,7 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
         return;
     }
     const countryCode = 29;
-    getFilmsOnPage('ukrainian', req.query.page, null, null, countryCode, function (response) {
+    getFilmsOnPage('ukrainian', req.params.pageNum, null, null, countryCode, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
         res.render('ukrainian', {
             articleContent: articleContent,
@@ -257,7 +257,7 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
 
 server.get('/zombie', function (req, res) {
     const genreCode = 89;
-    getFilmsOnPage('zombie', req.query.page, null, genreCode, null, function (response) {
+    getFilmsOnPage('zombie', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('zombie', {
             articleContent: articleContent,
@@ -277,7 +277,7 @@ server.get('/films/:pageNum?', function (req, res) {
         return;
     }
     const genreCode = 0;
-    getFilmsOnPage('zombie', req.query.page, null, null, null, function (response) {
+    getFilmsOnPage('zombie', req.params.pageNum, null, null, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
         res.render('films', {
             articleContent: articleContent,
