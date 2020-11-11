@@ -8,7 +8,11 @@
                 <div class="card-body">
                     <div class="mx-auto mb-4" style="width: 100%; max-width: 150px; height: 225px">
                         <img class="img-fluid" alt="<%= films[i].Title %>" style="object-fit: cover"
-                             src="https://image.tmdb.org/t/p/w1280/<%= films[i].PosterImg %>"/>
+                        <% if (films[i].PosterImg !== undefined && films[i].PosterImg.startsWith("http")) { %>
+                             src="<%= films[i].PosterImg %>"/>
+                        <% } else { %>
+                            src="https://image.tmdb.org/t/p/w1280/<%= films[i].PosterImg %>"/>
+                        <% } %>
                     </div>
                     <p class="card-text">Тривалість
                         (хв): <%= films[i].Duration === 0 || films[i].Duration === "" || films[i].Duration === undefined || films[i].Duration === null ? 'невідомо' : films[i].Duration %></p>

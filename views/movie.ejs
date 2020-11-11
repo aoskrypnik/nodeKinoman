@@ -16,7 +16,12 @@
         </div>
         <div class="card-body row">
             <div class="col-12 col-sm-4"><img class="img-fluid" alt="<%= movie.Title %>"
-                                              src="https://image.tmdb.org/t/p/w1280/<%= movie.PosterImg %>"/></div>
+                <% if(movie.PosterImg !== undefined && movie.PosterImg.startsWith("http")) { %>
+                                              src="<%= movie.PosterImg %>"/>
+                <% } else { %>
+                    src="https://image.tmdb.org/t/p/w1280/<%= movie.PosterImg %>"/>
+                <% } %>
+            </div>
             <div class="col-12 col-sm-8">
                 <p class="card-text">Тривалість
                     (хв): <%= movie.Duration === 0 || movie.Duration === "" || movie.Duration === undefined || movie.Duration === null ? 'невідомо' : movie.Duration %></p>
