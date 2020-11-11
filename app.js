@@ -146,13 +146,13 @@ server.get('/movie', function (req, res) {
 });
 
 server.get('/', function (req, res) {
-    getFilmsOnPage(null, 0, null, null, null, function (response) {
+    getFilmsFromDb(6, null, null, null, function (response) {
         res.render('index', {
             pageName: 'kinoman',
             pageTitle: "Кіноман - сервіс підбору та рекомендацій по фільмам",
             metaDescription: "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам",
             canonicalLink: null,
-            films: response.films
+            films: response
         });
     });
 });
