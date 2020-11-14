@@ -43,3 +43,57 @@ for(let i=0; i< 52400; ++i) {
         processFilm(i);
     }, 5000 * parseInt(""+i / 200));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function processFilm(id) {
+    request({
+        headers: {
+            'Accept-Language': 'ru-RU'
+        },
+        uri: `https://api.kino-teatr.ua/rest/film/${id}?apiKey=skrypnikukmaeduua`,
+        method: 'GET'
+    }, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            let b = JSON.parse(body);
+
+            const sql = `UPDATE Films SET TitleRu=?, DescriptionRu=? WHERE Id=?`;
+            pool.query(sql, [b.title, b.description, b.id],
+                function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log("Processed film " + b.id);
+                    }
+                });
+        }
+    });
+}
+
+const sql = `SELECT Id FROM Films`;
+pool.query(sql, function (err, results) {
+    for(let i=0; i<results.length;++i) {
+        setTimeout(() => {
+            processFilm(results[i].Id);
+            //console.log(results[i].Id);
+        }, 5000 * parseInt('' +parseInt(results[i].Id) / 500));
+    }
+});
