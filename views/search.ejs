@@ -11,7 +11,7 @@
 <%- include partials/navbar.ejs %>
 <div class="container">
 
-    <h1>Результати пошуку за назвою "<%= searchQuery %>"
+    <h1><%= i18n.__("SearchResults") %>"<%= searchQuery %>"
     </h1>
     <div class="changeable">
         <%- include partials/filmList.ejs %>

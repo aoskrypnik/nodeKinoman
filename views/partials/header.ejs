@@ -1,17 +1,4 @@
 <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180751267-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-
-        gtag('js', new Date());
-        gtag('config', 'UA-180751267-1');
-    </script>
-
     <!-- Google Tag Manager -->
     <script>(function (w, d, s, l, i) {
             w[l] = w[l] || [];
@@ -33,7 +20,7 @@
             <%= pageTitle %>
         </title>
     <% } else { %>
-        <title>Кіноман</title>
+        <title><%= i18n.__("Kinoman") %></title>
     <% } %>
     <% if (metaDescription !== undefined && metaDescription !== null) { %>
         <meta name="description" content="<%= metaDescription %>">

@@ -39,27 +39,27 @@
     <form class="mt-5">
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="yearMin">Рік від</label>
+                <label for="yearMin"><%= i18n.__("YearFrom") %></label>
                 <input type="number" class="form-control" id="yearMin" name="yearMin" min="1900" max="2020"
-                       placeholder="Рік від">
+                       placeholder="<%= i18n.__("YearFrom") %>">
             </div>
             <div class="form-group col-md-4">
-                <label for="yearMax">Рік до</label>
+                <label for="yearMax"><%= i18n.__("YearTo") %></label>
                 <input type="number" class="form-control" id="yearMax" name="yearMax" min="1900" max="2020"
-                       placeholder="Рік до">
+                       placeholder="<%= i18n.__("YearTo") %>">
             </div>
             <div class="form-group col-md-4">
-                <label for="ratingMin">Мінімальний рейтинг</label>
+                <label for="ratingMin"><%= i18n.__("RatingMin") %></label>
                 <input type="number" class="form-control" id="ratingMin" name="ratingMin" min="0" max="10"
-                       placeholder="Мінімальний рейтинг">
+                       placeholder="<%= i18n.__("RatingMin") %>">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="inputState">Жанр</label>
+                <label for="inputState"><%= i18n.__("Genre") %></label>
                 <select id="selectGenre" class="form-control">
                     <option name="genre" value="" selected>
-                        не обрано
+                        <%= i18n.__("NotChosen") %>
                     </option>
                     <% for (var i = 0; i < genres.length; i++) { %>
                         <option name="genre" value="<%= genres[i].Id %>"> 
@@ -69,10 +69,10 @@
                 </select>
             </div>
             <div class="form-group col-md-4">
-                <label for="inputState">Країна</label>
+                <label for="inputState"><%= i18n.__("Country") %></label>
                 <select id="selectCountry" class="form-control">
                     <option name="country" value="" selected>
-                        не обрано
+                        <%= i18n.__("NotChosen") %>
                     </option>
                     <% for (var i = 0; i < countries.length; i++) { %>
                         <option name="country" value="<%= countries[i].Id %>"> 
@@ -82,10 +82,10 @@
                 </select>
             </div>
             <div class="form-group col-md-4">
-                <label for="inputState">Настрій</label>
+                <label for="inputState"><%= i18n.__("CurMood") %></label>
                 <select id="selectMood" class="form-control">
                     <option name="mood" value="" selected>
-                        не обрано
+                        <%= i18n.__("NotChosen") %>
                     </option>
                     <% for (var i = 0; i < moods.length; i++) { %>
                         <option name="mood" value="<%= moods[i].Name %>"> 
@@ -96,7 +96,8 @@
             </div>
         </div>
         <div class="text-center">
-            <button type="button" id="searchPls" class="btn btn-outline-success mb-2">Знайти</button>
+            <button type="button" id="searchPls"
+                    class="btn btn-outline-success mb-2"><%= i18n.__("SearchAnother") %></button>
         </div>
     </form>
     <div class="searchResult">

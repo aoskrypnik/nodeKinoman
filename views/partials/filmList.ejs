@@ -14,12 +14,12 @@
                             src="https://image.tmdb.org/t/p/w1280/<%= films[i].PosterImg %>"/>
                         <% } %>
                     </div>
-                    <p class="card-text">Тривалість
-                        (хв): <%= films[i].Duration === 0 || films[i].Duration === "" || films[i].Duration === undefined || films[i].Duration === null ? 'невідомо' : films[i].Duration %></p>
-                    <p class="card-text">Рік випуску: <%= films[i].Year %></p>
-                    <p class="card-text">Рейтинг
-                        IMDB: <%= films[i].ImdbRating === 0 || films[i].ImdbRating === "" || films[i].ImdbRating === undefined || films[i].ImdbRating === null ? 'невідомо' : films[i].ImdbRating %></p>
-                    <a href="/movie?id=<%= films[i].Id %> %>" class="btn btn-light w-100">Детальніше</a>
+                    <p class="card-text"><%= i18n.__("Duration") %>
+                        <%= i18n.__("Minutes") %>: <%= films[i].Duration === 0 || films[i].Duration === "" || films[i].Duration === undefined || films[i].Duration === null ? i18n.__("Undefined") : films[i].Duration %></p>
+                    <p class="card-text"><%= i18n.__("ReleaseYear") %>: <%= films[i].Year %></p>
+                    <p class="card-text"><%= i18n.__("Rating") %>
+                        IMDB: <%= films[i].ImdbRating === 0 || films[i].ImdbRating === "" || films[i].ImdbRating === undefined || films[i].ImdbRating === null ? i18n.__("Undefined") : films[i].ImdbRating %></p>
+                    <a href="/movie?id=<%= films[i].Id %> %>" class="btn btn-light w-100"><%= i18n.__("Detailed") %></a>
                 </div>
             </div>
         </div>

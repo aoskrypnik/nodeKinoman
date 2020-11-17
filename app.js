@@ -4,6 +4,9 @@ const html_renderer = require("@contentful/rich-text-html-renderer");
 const express = require('express');
 const server = express();
 const mysql = require("mysql2");
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const i18n = require('i18n');
 const contentful = require('contentful');
 
 const pool = mysql.createPool({
@@ -19,6 +22,20 @@ const client = contentful.createClient({
     accessToken: "G1E1yZc6ZijRbL0fiPMpPTWXvlyjxLC4L_Ki9lopZuQ"
 });
 
+server.use(cookieParser("i18n_demo"));
+server.use(session({
+    secret: "i18n_demo",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {maxAge: 60000}
+}));
+i18n.configure({
+    locales: ['ru', 'ua'],
+    directory: __dirname + '/locales',
+    defaultLocale: 'ru',
+    cookie: 'i18n'
+});
+server.use(i18n.init);
 server.set('view engine', 'ejs');
 server.listen(8888);
 server.use(express.static(__dirname + "/public"));
@@ -36,15 +53,23 @@ client.getEntries()
         })
     });
 
-function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, callback) {
+function getFilmsFromDb(filmsCount, searchQuery, genreCode, countryCode, res, callback) {
     if (searchQuery === null || searchQuery === undefined) {
         searchQuery = "";
     }
 
-    let sqlQuery =
-        `SELECT * ` +
-        `FROM Films ` +
-        `WHERE Title LIKE '%${searchQuery}%' `;
+    let sqlQuery = "";
+    if (res === null || res.locale === 'ua') {
+        sqlQuery =
+            `SELECT * ` +
+            `FROM Films ` +
+            `WHERE Title LIKE '%${searchQuery}%' `;
+    } else {
+        sqlQuery =
+            `SELECT * ` +
+            `FROM Films ` +
+            `WHERE TitleRu LIKE '%${searchQuery}%' `;
+    }
 
     if (genreCode !== null && genreCode !== undefined) {
         sqlQuery +=
@@ -84,7 +109,7 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
     }
 
     if (lastFilms.length === 0 || (pageName !== null && pageName !== lastPageName) || pageName === 'search') {
-        getFilmsFromDb(5 * FILMS_PER_PAGE, searchQuery, genreCode, countryCode, function (response) {
+        getFilmsFromDb(5 * FILMS_PER_PAGE, searchQuery, genreCode, countryCode, null, function (response) {
             lastFilms = response;
             lastPageName = pageName;
 
@@ -105,6 +130,18 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
     }
 }
 
+server.get('/ua', function (req, res) {
+    res.cookie('i18n', 'ua');
+    res.setLocale("ua");
+    res.redirect(req.headers.referer);
+});
+
+server.get('/ru', function (req, res) {
+    res.cookie('i18n', 'ru');
+    res.setLocale("ru");
+    res.redirect(req.headers.referer);
+});
+
 server.get('/movie', function (req, res) {
     let id = req.query.id;
     let sqlQuery =
@@ -115,7 +152,13 @@ server.get('/movie', function (req, res) {
     pool.execute(sqlQuery, function (err, filmRes) {
         if (err) {
             console.error(err);
-            res.render('movie', {pageName: 'movie', movie: {}, pageTitle: undefined, metaDescription: undefined});
+            res.render('movie', {
+                pageName: 'movie',
+                movie: {},
+                pageTitle: undefined,
+                metaDescription: undefined,
+                i18n: res
+            });
         }
 
         if (filmRes.length === 0) {
@@ -123,12 +166,16 @@ server.get('/movie', function (req, res) {
         }
 
         let meta = "Фільм " + filmRes[0].Title + " - дивитись онлайн детальну інформацію та все про фільм: тривалість, рік випуску, рейтинг, бюджет, жанр, країна виробництва та опис";
-        pool.execute(`SELECT Name FROM Genres WHERE Id IN (SELECT GenreId FROM FilmGenres WHERE FilmId=${id})`,
+        pool.execute(`SELECT Name, NameRu FROM Genres WHERE Id IN (SELECT GenreId FROM FilmGenres WHERE FilmId=${id})`,
             function (err, genresRes) {
-                pool.execute(`SELECT Name FROM Countries WHERE Id IN (SELECT CountryId FROM FilmCountries WHERE FilmId=${id})`,
+                pool.execute(`SELECT Name, NameRu FROM Countries WHERE Id IN (SELECT CountryId FROM FilmCountries WHERE FilmId=${id})`,
                     function (err, countriesRes) {
                         pool.execute(`SELECT Name FROM Studios WHERE Id IN (SELECT StudioId FROM FilmStudios WHERE FilmId=${id})`,
                             function (err, studiosRes) {
+                                if (res.locale === 'ru') {
+                                    genresRes.forEach(genre => genre.Name = genre.NameRu);
+                                    countriesRes.forEach(country => country.Name = country.NameRu);
+                                }
                                 res.render('movie', {
                                     pageName: 'movie',
                                     canonicalLink: null,
@@ -137,7 +184,8 @@ server.get('/movie', function (req, res) {
                                     genres: genresRes,
                                     countries: countriesRes,
                                     studios: studiosRes,
-                                    metaDescription: meta
+                                    metaDescription: meta,
+                                    i18n: res
                                 });
                             });
                     });
@@ -146,19 +194,32 @@ server.get('/movie', function (req, res) {
 });
 
 server.get('/', function (req, res) {
-    getFilmsFromDb(6, null, null, null, function (response) {
+    getFilmsFromDb(6, null, null, null, null, function (response) {
+        if (res.locale === 'ru') {
+            response.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('index', {
             pageName: 'kinoman',
             pageTitle: "Кіноман - сервіс підбору та рекомендацій по фільмам",
             metaDescription: "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам",
             canonicalLink: null,
-            films: response
+            films: response,
+            i18n: res
         });
     });
 });
 
 server.get('/search', function (req, res) {
-    getFilmsFromDb(100, req.query.filmName, null, null, function (response) {
+    getFilmsFromDb(100, req.query.filmName, null, null, res, function (response) {
+        if (res.locale === 'ru') {
+            response.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('search', {
             articleContent: '',
             films: response,
@@ -167,6 +228,7 @@ server.get('/search', function (req, res) {
             canonicalLink: null,
             metaDescription: 'Використайте алгоритм підбору фільмів сайту Кіноман та з легкістю підберіть фільм під ваш настрій та інші параметри',
             searchQuery: req.query.filmName,
+            i18n: res
         });
     });
 });
@@ -180,6 +242,12 @@ server.get('/comedy/:pageNum?', function (req, res) {
     const genreCode = 6;
     getFilmsOnPage('comedy', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        if (res.locale === 'ru') {
+            response.films.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('comedy', {
             articleContent: articleContent,
             films: response.films,
@@ -188,6 +256,7 @@ server.get('/comedy/:pageNum?', function (req, res) {
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/comedy' : null,
             active: response.pageNumber + 1,
             metaDescription: 'Переглядайте підбірку фільмів жанру комедія на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
+            i18n: res
         });
     });
 });
@@ -201,6 +270,12 @@ server.get('/romantic/:pageNum?', function (req, res) {
     const genreCode = 31;
     getFilmsOnPage('romantic', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        if (res.locale === 'ru') {
+            response.films.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('romantic', {
             articleContent: articleContent,
             films: response.films,
@@ -209,6 +284,7 @@ server.get('/romantic/:pageNum?', function (req, res) {
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/romantic' : null,
             active: response.pageNumber + 1,
             metaDescription: 'Переглядайте підбірку романтичних фільмів про кохання на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
+            i18n: res
         });
     });
 });
@@ -222,6 +298,12 @@ server.get('/thriller/:pageNum?', function (req, res) {
     const genreCode = 10;
     getFilmsOnPage('thriller', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        if (res.locale === 'ru') {
+            response.films.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('thriller', {
             articleContent: articleContent,
             films: response.films,
@@ -230,6 +312,7 @@ server.get('/thriller/:pageNum?', function (req, res) {
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/thriller' : null,
             active: response.pageNumber + 1,
             metaDescription: 'Переглядайте підбірку фільмів жанру бойовик та трилер на сайті Кіноман. Вона створена нами та містить кращих представників категорії ',
+            i18n: res
         });
     });
 });
@@ -243,6 +326,12 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
     const countryCode = 29;
     getFilmsOnPage('ukrainian', req.params.pageNum, null, null, countryCode, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
+        if (res.locale === 'ru') {
+            response.films.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('ukrainian', {
             articleContent: articleContent,
             films: response.films,
@@ -251,6 +340,7 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/ukrainian' : null,
             active: response.pageNumber + 1,
             metaDescription: 'Переглядайте підбірку українських фільмів на сайті Кіноман. Вона створена нами та містить кращих представників категорії',
+            i18n: res
         });
     });
 });
@@ -259,13 +349,20 @@ server.get('/zombie', function (req, res) {
     const genreCode = 89;
     getFilmsOnPage('zombie', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        if (res.locale === 'ru') {
+            response.films.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('zombie', {
             articleContent: articleContent,
             films: response.films,
             pageTitle: 'Фільми про зомбі: онлайн підбірка та рекомендації кращих фільмів жанру',
             pageName: 'zombie',
             canonicalLink: null,
-            metaDescription: 'Переглядайте підбірку фільмів про зомбі на сайті Кіноман. Вона створена нами та містить кращих представників категорії'
+            metaDescription: 'Переглядайте підбірку фільмів про зомбі на сайті Кіноман. Вона створена нами та містить кращих представників категорії',
+            i18n: res
         });
     });
 });
@@ -279,6 +376,12 @@ server.get('/films/:pageNum?', function (req, res) {
     const genreCode = 0;
     getFilmsOnPage('zombie', req.params.pageNum, null, null, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        if (res.locale === 'ru') {
+            response.films.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
         res.render('films', {
             articleContent: articleContent,
             films: response.films,
@@ -286,7 +389,8 @@ server.get('/films/:pageNum?', function (req, res) {
             pageName: 'films',
             canonicalLink: response.pageNumber !== 0 ? req.protocol + '://' + req.get('host') + '/films' : null,
             active: response.pageNumber + 1,
-            metaDescription: 'Переглядайте підбірку фільмів для гарного настрою на сайті Кіноман. Вона створена нами та містить кращих представників категорії'
+            metaDescription: 'Переглядайте підбірку фільмів для гарного настрою на сайті Кіноман. Вона створена нами та містить кращих представників категорії',
+            i18n: res
         });
     });
 });
@@ -335,7 +439,13 @@ server.get('/selection', function (req, res) {
             res.send('not found');
         }
 
-        res.render('partials/filmList', {films: results}, function (err, html) {
+        if (res.locale === 'ru') {
+            results.forEach(film => {
+                film.Title = film.TitleRu;
+                film.Description = film.DescriptionRu;
+            });
+        }
+        res.render('partials/filmList', {films: results, i18n: res}, function (err, html) {
             if (err) {
                 return res.sendStatus(500);
             }
@@ -359,8 +469,11 @@ server.get('/selection/form', function (req, res) {
                 resolve(results);
             });
         });
-
         genresPromise.then(function (genres) {
+            if (res.locale === 'ru') {
+                genres.forEach(genre => genre.Name = genre.NameRu);
+                countries.forEach(country => country.Name = country.NameRu);
+            }
             res.render('selection', {
                 pageName: 'selection',
                 pageTitle: 'Пошук фільму - швидкий і зручний підбір фільму за заданини параметрами',
@@ -368,7 +481,8 @@ server.get('/selection/form', function (req, res) {
                 canonicalLink: null,
                 countries: countries,
                 genres: genres,
-                moods: moods
+                moods: moods,
+                i18n: res
             });
         });
     });

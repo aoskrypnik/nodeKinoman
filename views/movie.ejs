@@ -23,29 +23,29 @@
                 <% } %>
             </div>
             <div class="col-12 col-sm-8">
-                <p class="card-text">Тривалість
-                    (хв): <%= movie.Duration === 0 || movie.Duration === "" || movie.Duration === undefined || movie.Duration === null ? 'невідомо' : movie.Duration %></p>
-                <p class="card-text">Рік випуску: <%= movie.Year %></p>
-                <p class="card-text">Рейтинг
-                    IMDB: <%= movie.ImdbRating === 0 || movie.ImdbRating === "" || movie.ImdbRating === undefined || movie.ImdbRating === null ? 'невідомо' : movie.ImdbRating %></p>
-                <p class="card-text">Бюджет
-                    $: <%= (!isNaN(movie.Budget) && parseInt(movie.Budget) === 0) || movie.Budget === undefined || movie.Budget === null ? 'невідомо' : `${movie.Budget} млн.` %></p>
+                <p class="card-text"><%= i18n.__("Duration") %>
+                    <%= i18n.__("Minutes") %>: <%= movie.Duration === 0 || movie.Duration === "" || movie.Duration === undefined || movie.Duration === null ? i18n.__("Undefined") : movie.Duration %></p>
+                <p class="card-text"><%= i18n.__("ReleaseYear") %>: <%= movie.Year %></p>
+                <p class="card-text"><%= i18n.__("Rating") %>
+                    IMDB: <%= movie.ImdbRating === 0 || movie.ImdbRating === "" || movie.ImdbRating === undefined || movie.ImdbRating === null ? i18n.__("Undefined") : movie.ImdbRating %></p>
+                <p class="card-text"><%= i18n.__("Budget") %>
+                    $: <%= (!isNaN(movie.Budget) && parseInt(movie.Budget) === 0) || movie.Budget === undefined || movie.Budget === null ? i18n.__("Undefined") : `${movie.Budget} млн.` %></p>
 
                 <% if (movie.MegogoId != null) { %>
                     <p class="card-text">
                         <a class="card-text" href="https://megogo.net/ua/view/<%= movie.MegogoId %>.html">
-                            Дивитись на MEGOGO
+                            <%= i18n.__("MegogoLook") %>
                         </a>
                     </p>
                 <% } %>
 
-                <p class="card-text">Жанри:
+                <p class="card-text"><%= i18n.__("Genres") %>:
                     <% for(var i = 0; i < genres.length; i++) { %>
                         <%= genres[i].Name %>
                     <% } %>
                 </p>
                 <p></p>
-                <p class="card-text">Країни:
+                <p class="card-text"><%= i18n.__("Countries") %>:
                     <% for(var i = 0; i < countries.length; i++) { %>
                         <%= countries[i].Name %>
                     <% } %>
