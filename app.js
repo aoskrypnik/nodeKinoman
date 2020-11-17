@@ -49,7 +49,7 @@ client.getEntries()
     .then(function (entries) {
         // log the title for all the entries that have it
         entries.items.forEach(function (entry) {
-            movieArticles.push({genre: parseInt(entry.fields.genre, 10), content: entry.fields.articleRichContent})
+            movieArticles.push({genre: parseInt(entry.fields.genre, 10), content: entry.fields.articleRichContent, isUkrainian: entry.fields.isUkrainian})
         })
     });
 
@@ -241,12 +241,13 @@ server.get('/comedy/:pageNum?', function (req, res) {
     }
     const genreCode = 6;
     getFilmsOnPage('comedy', req.params.pageNum, null, genreCode, null, function (response) {
-        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === true).content);
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
+            articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
         }
         res.render('comedy', {
             articleContent: articleContent,
@@ -269,12 +270,13 @@ server.get('/romantic/:pageNum?', function (req, res) {
     }
     const genreCode = 31;
     getFilmsOnPage('romantic', req.params.pageNum, null, genreCode, null, function (response) {
-        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === true).content);
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
+            articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
         }
         res.render('romantic', {
             articleContent: articleContent,
@@ -297,12 +299,13 @@ server.get('/thriller/:pageNum?', function (req, res) {
     }
     const genreCode = 10;
     getFilmsOnPage('thriller', req.params.pageNum, null, genreCode, null, function (response) {
-        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === true).content);
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
+            html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
         }
         res.render('thriller', {
             articleContent: articleContent,
@@ -325,12 +328,13 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
     }
     const countryCode = 29;
     getFilmsOnPage('ukrainian', req.params.pageNum, null, null, countryCode, function (response) {
-        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode && article.isUkrainian === true).content);
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
+            articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode && article.isUkrainian === false).content);
         }
         res.render('ukrainian', {
             articleContent: articleContent,
@@ -348,12 +352,13 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
 server.get('/zombie', function (req, res) {
     const genreCode = 89;
     getFilmsOnPage('zombie', req.params.pageNum, null, genreCode, null, function (response) {
-        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === true).content);
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
+            articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
         }
         res.render('zombie', {
             articleContent: articleContent,
@@ -375,12 +380,13 @@ server.get('/films/:pageNum?', function (req, res) {
     }
     const genreCode = 0;
     getFilmsOnPage('zombie', req.params.pageNum, null, null, null, function (response) {
-        const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === true).content);
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
+            articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
         }
         res.render('films', {
             articleContent: articleContent,
