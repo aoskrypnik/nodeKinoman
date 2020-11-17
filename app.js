@@ -333,7 +333,7 @@ server.get('/thriller/:pageNum?', function (req, res) {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
-            html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
+            articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
             pageTitle = "Боевики: онлайн подборка и рекомендации лучших фильмов жанра триллер";
             metaDescription = "Просмотрите подборку фильмов жанра боевик и трилер на сайте Киноман. Она создана нами и отображает лучшие фильмы жанра";
         }
