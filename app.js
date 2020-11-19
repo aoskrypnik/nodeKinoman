@@ -177,12 +177,12 @@ server.get('/movie', function (req, res) {
                     function (err, countriesRes) {
                         pool.execute(`SELECT Name FROM Studios WHERE Id IN (SELECT StudioId FROM FilmStudios WHERE FilmId=${id})`,
                             function (err, studiosRes) {
-                                let pageTitle = filmRes[0].Title + " - детальний опис та інформація про фільм жанру " + genresRes[0] + " онлайн";
+                                let pageTitle = filmRes[0].Title + " - інформація про фільм жанру " + genresRes[0] + " онлайн";
                                 let movie = filmRes[0];
                                 if (res.locale === 'ru') {
                                     genresRes.forEach(genre => genre.Name = genre.NameRu);
                                     countriesRes.forEach(country => country.Name = country.NameRu);
-                                    pageTitle = filmRes[0].Title + " - детальное описание и информация про фильмы жанра " + genresRes[0] + " онлайн";
+                                    pageTitle = filmRes[0].Title + " - информация про фильмы жанра " + genresRes[0] + " онлайн";
                                     movie.Title = movie.TitleRu;
                                     movie.Description = movie.DescriptionRu;
                                 }
@@ -299,7 +299,7 @@ server.get('/romantic/:pageNum?', function (req, res) {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
-            pageTitle = "Кино про любовь: онлайн подборка и рекомендации лучших фильмов романтического жанра";
+            pageTitle = "Кино про любовь: онлайн подборка романтического жанра";
             metaDescription = "Смотрите подборку романтических фильмов про любовь на сайте Киноман. Она создана нами и гарантирует лучшие фильмы";
         }
         res.render('romantic', {
@@ -324,14 +324,14 @@ server.get('/thriller/:pageNum?', function (req, res) {
     const genreCode = 10;
     getFilmsOnPage('thriller', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
-        let pageTitle = 'Бойовики: онлайн підбірка та рекомендації кращих фільмів жанру';
+        let pageTitle = 'Кіно бойовики: онлайн підбірка та рекомендації кращих фільмів жанру';
         let metaDescription = 'Переглядайте підбірку фільмів жанру бойовик та трилер на сайті Кіноман. Вона створена нами та містить кращих представників категорії ';
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
-            pageTitle = "Боевики: онлайн подборка и рекомендации лучших фильмов жанра триллер";
+            pageTitle = "Кино боевики: онлайн подборка и рекомендации лучших фильмов жанра триллер";
             metaDescription = "Просмотрите подборку фильмов жанра боевик и трилер на сайте Киноман. Она создана нами и отображает лучшие фильмы жанра";
         }
         res.render('thriller', {
@@ -356,14 +356,14 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
     const countryCode = 29;
     getFilmsOnPage('ukrainian', req.params.pageNum, null, null, countryCode, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode).content);
-        let pageTitle = 'Українські фільми: онлайн підбірка та рекомендації кращих фільмів жанру';
+        let pageTitle = 'Українські фільми: онлайн підбірка та рекомендації кращих фільмів';
         let metaDescription = 'Переглядайте підбірку українських фільмів на сайті Кіноман. Вона створена нами та містить кращих представників категорії';
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
-            pageTitle = 'Украинские фильмы: онлайн подборка и рекомандации лучших фильмов страны';
+            pageTitle = 'Украинское кино: онлайн подборка и рекомендации лучших фильмов страны';
             metaDescription = 'Просмотрите подборку украинских фильмов на сайте Киноман. Лучшее отечественное кино в нашей подборке';
         }
         res.render('ukrainian', {
@@ -383,14 +383,14 @@ server.get('/zombie', function (req, res) {
     const genreCode = 89;
     getFilmsOnPage('zombie', req.params.pageNum, null, genreCode, null, function (response) {
         const articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode).content);
-        let pageTitle = 'Фільми про зомбі: онлайн підбірка та рекомендації кращих фільмів жанру';
+        let pageTitle = 'Кіно про зомбі: онлайн підбірка та рекомендації кращих фільмів жанру';
         let metaDescription = 'Переглядайте підбірку фільмів про зомбі на сайті Кіноман. Вона створена нами та містить кращих представників категорії';
         if (res.locale === 'ru') {
             response.films.forEach(film => {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
-            pageTitle = 'Фильмы про зомби: онлайн подборка и рекомендации лучших фильмов про мертвецов';
+            pageTitle = 'Кино про зомби: онлайн подборка лучших фильмов про мертвецов';
             metaDescription = 'Смотрите подборку фильмов про зомби на сайте Киноман. Качественное кино про мертвецов, которое наводит страх';
         }
         res.render('zombie', {
@@ -421,7 +421,7 @@ server.get('/films/:pageNum?', function (req, res) {
                 film.Title = film.TitleRu;
                 film.Description = film.DescriptionRu;
             });
-            pageTitle = 'Фильмы для хорошего настроения: онлайн подборка лучших позитвных фильмов';
+            pageTitle = 'Фильмы под настроение: онлайн подборка лучших позитивных фильмов';
             metaDescription = 'Посмотрите подборку фильмов для хорошего настроения на сайте Киноман. Она создана нами и предоставляет лучшее кино для позитива';
         }
         res.render('films', {
@@ -517,7 +517,7 @@ server.get('/selection/form', function (req, res) {
             if (res.locale === 'ru') {
                 genres.forEach(genre => genre.Name = genre.NameRu);
                 countries.forEach(country => country.Name = country.NameRu);
-                pageTitle = 'Поиск фильма – быстрый и удобный подбор фильмов за заданными параметрами';
+                pageTitle = 'Поиск фильма – быстрый и удобный подбор фильмов за параметрами';
                 metaDescription = 'Используйте алгоритм подбора фильмов сайта Киноман и с легкостью выберите фильм под ваше настроение';
             }
             res.render('selection', {
