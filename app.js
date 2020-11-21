@@ -135,30 +135,38 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
 }
 
 server.get('/makeUa', function (req, res) {
-    res.cookie('i18n', 'ua');
-    res.setLocale("ua");
-    let referer = req.headers.referer;
-    if (referer.includes('?')) {
-        let index = referer.indexOf('?');
-        res.redirect(referer.substring(0, index) + '/ua' + referer.substring(index));
+    if (i18n.getLocale(req) === 'ua') {
+        res.redirect(req.headers.referer);
     } else {
-        if (referer[referer.length - 1] === '/')
-            res.redirect(req.headers.referer + 'ua');
-        else
-            res.redirect(req.headers.referer + '/ua');
+        res.cookie('i18n', 'ua');
+        res.setLocale("ua");
+        let referer = req.headers.referer;
+        if (referer.includes('?')) {
+            let index = referer.indexOf('?');
+            res.redirect(referer.substring(0, index) + '/ua' + referer.substring(index));
+        } else {
+            if (referer[referer.length - 1] === '/')
+                res.redirect(req.headers.referer + 'ua');
+            else
+                res.redirect(req.headers.referer + '/ua');
+        }
     }
 });
 
 server.get('/makeRu', function (req, res) {
-    res.cookie('i18n', 'ru');
-    res.setLocale("ru");
-    let referer = req.headers.referer;
-
-    if (referer.includes('/ua')) {
-        let index = referer.indexOf('/ua');
-        res.redirect(referer.substring(0, index) + referer.substring(index + 3));
+    if (i18n.getLocale(req) === 'ru') {
+        res.redirect(req.headers.referer);
     } else {
-        res.redirect(referer);
+        res.cookie('i18n', 'ru');
+        res.setLocale("ru");
+        let referer = req.headers.referer;
+
+        if (referer.includes('/ua')) {
+            let index = referer.indexOf('/ua');
+            res.redirect(referer.substring(0, index) + referer.substring(index + 3));
+        } else {
+            res.redirect(referer);
+        }
     }
 });
 
@@ -485,7 +493,7 @@ server.get('/films/:pageNum?/:lang?', function (req, res) {
         return;
     }
     const genreCode = 0;
-    getFilmsOnPage('zombie', req.params.pageNum, null, null, null, function (response) {
+    getFilmsOnPage('films', req.params.pageNum, null, null, null, function (response) {
         let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === true).content);
         let pageTitle = 'Фільми для гарного настрою: онлайн підбірка кращих фільмів жанру';
         let metaDescription = 'Переглядайте підбірку фільмів для гарного настрою на сайті Кіноман. Вона створена нами та містить кращих представників категорії';
