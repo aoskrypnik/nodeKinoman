@@ -4,6 +4,7 @@
         .carousel-control-prev-icon {
             background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='000' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
         }
+
         .carousel-control-next-icon {
             background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
         }
@@ -11,8 +12,13 @@
     <h2 class="text-center"><%= i18n.__("KinomanHeading") %></h2>
     <div class="mb-3 mt-3">
         <form class="form-inline my-2 my-lg-0 justify-content-center">
-            <a class="btn btn-outline-success my-2 my-sm-0" type="submit"
-               href="/selection/form"><%= i18n.__("WhatToWatch") %></a>
+            <% if(curLocale === 'ua') { %>
+                <a class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                   href="/selection/form/ua"><%= i18n.__("WhatToWatch") %></a>
+            <% } else { %>
+                <a class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                   href="/selection/form"><%= i18n.__("WhatToWatch") %></a>
+            <% } %>
         </form>
     </div>
     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -42,8 +48,13 @@
                                             <p class="card-text"><%= i18n.__("Rating") %>
                                                 IMDB: <%= films[i].ImdbRating === 0 ? i18n.__("Undefined") : films[i].ImdbRating %></p>
                                         </div>
-                                        <a href="/movie?id=<%= films[i].Id %> %>"
-                                           class="btn btn-light w-100"><%= i18n.__("Detailed") %></a>
+                                        <% if(curLocale === 'ua') { %>
+                                            <a href="/movie/ua?id=<%= films[i].Id %> %>"
+                                               class="btn btn-light w-100"><%= i18n.__("Detailed") %></a>
+                                        <% } else { %>
+                                            <a href="/movie?id=<%= films[i].Id %> %>"
+                                               class="btn btn-light w-100"><%= i18n.__("Detailed") %></a>
+                                        <% } %>
                                     </div>
                                 </div>
                             </div>

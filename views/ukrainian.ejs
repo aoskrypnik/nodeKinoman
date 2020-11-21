@@ -5,25 +5,7 @@
         <%- include partials/filmList.ejs %>
     </div>
 
-    <nav aria-label="Page navigation example center">
-        <ul class="pagination justify-content-center">
-            <li class="page-item <% if (active === 1) { %>active <% } %>">
-                <a class="page-link" href="/ukrainian" <% if (active === 1) { %>disabled="disabled" <% } %>>1</a>
-            </li>
-            <li class="page-item <% if (active === 2) { %>active <% } %>">
-                <a class="page-link" href="/ukrainian/2" <% if (active === 2) { %>disabled="disabled" <% } %>>2</a>
-            </li>
-            <li class="page-item <% if (active === 3) { %>active <% } %>">
-                <a class="page-link" href="/ukrainian/3" <% if (active === 3) { %>disabled="disabled" <% } %>>3</a>
-            </li>
-            <li class="page-item <% if (active === 4) { %>active <% } %>">
-                <a class="page-link" href="/ukrainian/4" <% if (active === 4) { %>disabled="disabled" <% } %>>4</a>
-            </li>
-            <li class="page-item <% if (active === 5) { %>active <% } %>">
-                <a class="page-link" href="/ukrainian/5" <% if (active === 5) { %>disabled="disabled" <% } %>>5</a>
-            </li>
-        </ul>
-    </nav>
+    <%- include partials/pagList.ejs %>
 
     <hr>
     <div>

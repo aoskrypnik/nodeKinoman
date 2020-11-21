@@ -1,5 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/"><%= i18n.__("Kinoman") %></a>
+    <% if(curLocale === 'ua') { %>
+        <a class="navbar-brand" href="/ua"><%= i18n.__("Kinoman") %></a>
+    <% } else{ %>
+        <a class="navbar-brand" href="/"><%= i18n.__("Kinoman") %></a>
+    <% } %>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -12,42 +16,66 @@
                 <% } else{ %>
             <li class="nav-item">
                 <% } %>
-                <a class="nav-link" href="/comedy"><%= i18n.__("Comedy") %></a>
+                <% if(curLocale === 'ua') { %>
+                    <a class="nav-link" href="/comedy/ua"><%= i18n.__("Comedy") %></a>
+                <% } else{ %>
+                    <a class="nav-link" href="/comedy"><%= i18n.__("Comedy") %></a>
+                <% } %>
             </li>
             <% if (pageName === "romantic") { %>
             <li class="nav-item active">
                 <% } else{ %>
             <li class="nav-item">
                 <% } %>
-                <a class="nav-link" href="/romantic"><%= i18n.__("Romantic") %></a>
+                <% if(curLocale === 'ua') { %>
+                    <a class="nav-link" href="/romantic/ua"><%= i18n.__("Romantic") %></a>
+                <% } else{ %>
+                    <a class="nav-link" href="/romantic"><%= i18n.__("Romantic") %></a>
+                <% } %>
             </li>
             <% if (pageName === "thriller") { %>
             <li class="nav-item active">
                 <% } else{ %>
             <li class="nav-item">
                 <% } %>
-                <a class="nav-link" href="/thriller"><%= i18n.__("Thriller") %></a>
+                <% if(curLocale === 'ua') { %>
+                    <a class="nav-link" href="/thriller/ua"><%= i18n.__("Thriller") %></a>
+                <% } else{ %>
+                    <a class="nav-link" href="/thriller"><%= i18n.__("Thriller") %></a>
+                <% } %>
             </li>
             <% if (pageName === "zombie") { %>
             <li class="nav-item active">
                 <% } else{ %>
             <li class="nav-item">
                 <% } %>
-                <a class="nav-link" href="/zombie"><%= i18n.__("Zombie") %></a>
+                <% if(curLocale === 'ua') { %>
+                    <a class="nav-link" href="/zombie/ua"><%= i18n.__("Zombie") %></a>
+                <% } else{ %>
+                    <a class="nav-link" href="/zombie"><%= i18n.__("Zombie") %></a>
+                <% } %>
             </li>
             <% if (pageName === "ukrainian") { %>
             <li class="nav-item active">
                 <% } else{ %>
             <li class="nav-item">
                 <% } %>
-                <a class="nav-link" href="/ukrainian"><%= i18n.__("Ukrainian") %></a>
+                <% if(curLocale === 'ua') { %>
+                    <a class="nav-link" href="/ukrainian/ua"><%= i18n.__("Ukrainian") %></a>
+                <% } else{ %>
+                    <a class="nav-link" href="/ukrainian"><%= i18n.__("Ukrainian") %></a>
+                <% } %>
             </li>
             <% if (pageName === "films") { %>
             <li class="nav-item active">
                 <% } else{ %>
             <li class="nav-item">
                 <% } %>
-                <a class="nav-link" href="/films"><%= i18n.__("ByMood") %></a>
+                <% if(curLocale === 'ua') { %>
+                    <a class="nav-link" href="/films/ua"><%= i18n.__("ByMood") %></a>
+                <% } else{ %>
+                    <a class="nav-link" href="/films"><%= i18n.__("ByMood") %></a>
+                <% } %>
             </li>
         </ul>
         <form id="searchForm" name="searchForm" action="/search" method="get" class="form-inline my-2 my-lg-0">
@@ -58,12 +86,12 @@
     </div>
     <div class="justify-content-right ml-2">
         <strong>
-            <a href="/ua">
+            <a href="/makeUa">
                 <img alt="ukr" src="https://cdn.countryflags.com/thumbs/ukraine/flag-button-square-250.png"
                      height="15px" width="15px"/>
             </a>
             &nbsp;&nbsp;
-            <a href="/ru">
+            <a href="/makeRu">
                 <img alt="ru" src="https://cdn.countryflags.com/thumbs/russia/flag-button-square-250.png"
                      height="15px" width="15px"/>
             </a>
