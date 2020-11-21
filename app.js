@@ -234,6 +234,8 @@ server.get('/movie/:lang?', function (req, res) {
 });
 
 server.get('/', function (req, res) {
+    res.cookie('i18n', 'ru');
+    res.setLocale("ru");
     getFilmsFromDb(6, null, null, null, null, function (response) {
         response.forEach(film => {
             film.Title = film.TitleRu;
@@ -254,6 +256,8 @@ server.get('/', function (req, res) {
 });
 
 server.get('/ua', function (req, res) {
+    res.cookie('i18n', 'ua');
+    res.setLocale("ua");
     getFilmsFromDb(6, null, null, null, null, function (response) {
         let pageTitle = "Кіноман - сервіс підбору та рекомендацій по фільмам";
         let metaDescription = "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам";
