@@ -177,12 +177,10 @@ server.get('/movie', function (req, res) {
                     function (err, countriesRes) {
                         pool.execute(`SELECT Name FROM Studios WHERE Id IN (SELECT StudioId FROM FilmStudios WHERE FilmId=${id})`,
                             function (err, studiosRes) {
-                                let pageTitle = filmRes[0].Title + " - інформація про фільм жанру " + genresRes[0] + " онлайн";
                                 let movie = filmRes[0];
                                 if (res.locale === 'ru') {
                                     genresRes.forEach(genre => genre.Name = genre.NameRu);
                                     countriesRes.forEach(country => country.Name = country.NameRu);
-                                    pageTitle = filmRes[0].Title + " - информация про фильмы жанра " + genresRes[0] + " онлайн";
                                     movie.Title = movie.TitleRu;
                                     movie.Description = movie.DescriptionRu;
                                 }
@@ -190,7 +188,7 @@ server.get('/movie', function (req, res) {
                                     pageName: 'movie',
                                     canonicalLink: null,
                                     movie: movie,
-                                    pageTitle: pageTitle,
+                                    pageTitle: filmRes[0].Title,
                                     genres: genresRes,
                                     countries: countriesRes,
                                     studios: studiosRes,
@@ -334,7 +332,7 @@ server.get('/thriller/:pageNum?', function (req, res) {
                 film.Description = film.DescriptionRu;
             });
             articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
-            pageTitle = "Кино боевики: онлайн подборка и рекомендации лучших фильмов жанра триллер";
+            pageTitle = "Кино боевики: онлайн подборка лучших фильмов жанра триллер";
             metaDescription = "Просмотрите подборку фильмов жанра боевик и трилер на сайте Киноман. Она создана нами и отображает лучшие фильмы жанра";
         }
         res.render('thriller', {
@@ -368,7 +366,7 @@ server.get('/ukrainian/:pageNum?', function (req, res) {
             });
             articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === countryCode && article.isUkrainian === false).content);
             pageTitle = 'Украинское кино: онлайн подборка и рекомендации лучших фильмов страны';
-            metaDescription = 'Просмотрите подборку украинских фильмов на сайте Киноман. Лучшее отечественное кино в нашей подборке';
+            metaDescription = 'Просмотрите новинки украинского кино на сайте Киноман. Лучшее украинские кино в нашей подборке';
         }
         res.render('ukrainian', {
             articleContent: articleContent,
@@ -428,7 +426,7 @@ server.get('/films/:pageNum?', function (req, res) {
             });
             articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === genreCode && article.isUkrainian === false).content);
             pageTitle = 'Фильмы под настроение: онлайн подборка лучших позитивных фильмов';
-            metaDescription = 'Посмотрите подборку фильмов для хорошего настроения на сайте Киноман. Она создана нами и предоставляет лучшее кино для позитива';
+            metaDescription = 'Смотрите подборку кино про зомби на сайте Киноман. Кино про зомби апокалипсис, которое наводит страх';
         }
         res.render('films', {
             articleContent: articleContent,
