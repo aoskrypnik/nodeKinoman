@@ -1,75 +1,56 @@
-<!DOCTYPE html>
-<html>
 <%- include partials/header.ejs %>
-<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53BZ5VC"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-<!-- End Google Tag Manager (noscript) -->
-<%- include partials/navbar.ejs %>
-<div class="container mt-5">
+<div class="flex-grow-1 container mt-5">
+    <style>
+        .carousel-control-prev-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='000' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
+        }
+        .carousel-control-next-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+        }
+    </style>
     <h2 class="text-center"><%= i18n.__("KinomanHeading") %></h2>
     <div class="mb-3 mt-3">
         <form class="form-inline my-2 my-lg-0 justify-content-center">
-            <a class="btn btn-outline-success my-2 my-sm-0" type="submit" href="/selection/form"><%= i18n.__("WhatToWatch") %></a>
+            <a class="btn btn-outline-success my-2 my-sm-0" type="submit"
+               href="/selection/form"><%= i18n.__("WhatToWatch") %></a>
         </form>
     </div>
     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="row">
-                    <% for(var i = 0; i < 3; i++) { %>
-                        <div class="col-12 col-md-6 col-lg-4 mt-2 mb-2">
+            <% for(var i = 0; i < 6; i++) { %>
+                <div class="carousel-item <% if(i == 0) { %>active <% } %>">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-6  mt-2 mb-2">
                             <div class="card h-100">
                                 <div class="card-header">
                                     <h5 class="text-nowrap"
                                         style="text-overflow: ellipsis; overflow: hidden"><%= films[i].Title %></h5>
                                 </div>
-                                <div class="card-body">
-                                    <div class="mx-auto mb-4" style="width: 100%; max-width: 150px; height: 225px">
-                                        <img class="img-fluid" alt="<%= films[i].Title %>" style="object-fit: cover"
+                                <div class="card-body row">
+                                    <div class="mx-auto col-12 col-lg-6 mb-4 mb-lg-0"
+                                         style="width: 100%; max-width: 180px; height: 225px">
+                                        <img class="img-fluid" alt="<%= films[i].Title %>"
+                                             style="object-fit: cover; height: 100%; width: 100%"
                                              src="https://image.tmdb.org/t/p/w1280/<%= films[i].PosterImg %>"/>
                                     </div>
-                                    <p class="card-text"><%= i18n.__("Duration") %>
-                                        <%= i18n.__("Minutes") %>: <%= films[i].Duration === 0 ? i18n.__("Undefined") : films[i].Duration %></p>
-                                    <p class="card-text"><%= i18n.__("ReleaseYear") %>: <%= films[i].Year %></p>
-                                    <p class="card-text"><%= i18n.__("Rating") %>
-                                        IMDB: <%= films[i].ImdbRating === 0 ? i18n.__("Undefined") : films[i].ImdbRating %></p>
-                                    <a href="/movie?id=<%= films[i].Id %> %>" class="btn btn-light w-100"><%= i18n.__("Detailed") %></a>
+                                    <div class="d-flex flex-column col-12 col-lg-6">
+                                        <div class="flex-grow-1 mb-2">
+                                            <p class="card-text"><%= i18n.__("Duration") %>
+                                                <%= i18n.__("Minutes") %>
+                                                : <%= films[i].Duration === 0 ? i18n.__("Undefined") : films[i].Duration %></p>
+                                            <p class="card-text"><%= i18n.__("ReleaseYear") %>: <%= films[i].Year %></p>
+                                            <p class="card-text"><%= i18n.__("Rating") %>
+                                                IMDB: <%= films[i].ImdbRating === 0 ? i18n.__("Undefined") : films[i].ImdbRating %></p>
+                                        </div>
+                                        <a href="/movie?id=<%= films[i].Id %> %>"
+                                           class="btn btn-light w-100"><%= i18n.__("Detailed") %></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    <% } %>
+                    </div>
                 </div>
-            </div>
-            <div class="carousel-item">
-                <div class="row">
-                    <% for(var i = 3; i < 6; i++) { %>
-                        <div class="col-12 col-md-6 col-lg-4 mt-2 mb-2">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h5 class="text-nowrap"
-                                        style="text-overflow: ellipsis; overflow: hidden"><%= films[i].Title %></h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mx-auto mb-4" style="width: 100%; max-width: 150px; height: 225px">
-                                        <img class="img-fluid" alt="<%= films[i].Title %>" style="object-fit: cover"
-                                             src="https://image.tmdb.org/t/p/w1280/<%= films[i].PosterImg %>"/>
-                                    </div>
-                                    <p class="card-text"><%= i18n.__("Duration") %>
-                                        <%= i18n.__("Minutes") %>: <%= films[i].Duration === 0 ? i18n.__("Undefined") : films[i].Duration %></p>
-                                    <p class="card-text"><%= i18n.__("ReleaseYear") %>: <%= films[i].Year %></p>
-                                    <p class="card-text"><%= i18n.__("Rating") %>
-                                        IMDB: <%= films[i].ImdbRating === 0 ? i18n.__("Undefined") : films[i].ImdbRating %></p>
-                                    <a href="/movie?id=<%= films[i].Id %> %>" class="btn btn-light w-100"><%= i18n.__("Detailed") %></a>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>
-                </div>
-            </div>
+            <% } %>
         </div>
         <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -81,5 +62,4 @@
         </a>
     </div>
 </div>
-</body>
-</html>
+<%- include partials/footer.ejs %>

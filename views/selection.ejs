@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html>
 <%- include partials/header.ejs %>
-<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53BZ5VC"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-<!-- End Google Tag Manager (noscript) -->
-<%- include partials/navbar.ejs %>
-
 <script>
     $(document).ready(function () {
         $('#searchPls').on('click', function () {
@@ -49,9 +38,9 @@
                        placeholder="<%= i18n.__("YearTo") %>">
             </div>
             <div class="form-group col-md-4">
-                <label for="ratingMin"><%= i18n.__("RatingMin") %></label>
+                <label for="ratingMin"><%= i18n.__("MinRating") %></label>
                 <input type="number" class="form-control" id="ratingMin" name="ratingMin" min="0" max="10"
-                       placeholder="<%= i18n.__("RatingMin") %>">
+                       placeholder="<%= i18n.__("MinRating") %>">
             </div>
         </div>
         <div class="form-row">
@@ -103,5 +92,4 @@
     <div class="searchResult">
     </div>
 </div>
-</body>
-</html>
+<%- include partials/footer.ejs %>

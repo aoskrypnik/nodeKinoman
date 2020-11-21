@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <head>
     <!-- Google Tag Manager -->
     <script>(function (w, d, s, l, i) {
@@ -29,10 +31,18 @@
     <% } %>
 
     <% if (canonicalLink !== null && canonicalLink !== undefined) { %>
-        <link rel="canonical" href="<%= canonicalLink %>" />
-    <% }%>
+        <link rel="canonical" href="<%= canonicalLink %>"/>
+    <% } %>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
+<body class="d-flex flex-column min-vh-100">
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53BZ5VC"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+<%- include navbar.ejs %>
