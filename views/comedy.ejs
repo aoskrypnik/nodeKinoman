@@ -17,15 +17,20 @@
 
     <nav aria-label="Page navigation example center">
         <ul class="pagination justify-content-center">
-            <li class="page-item <% if (active === 1) { %>active <% } %> >"><a class="page-link" href="/comedy">1</a>
+            <li class="page-item <% if (active === 1) { %>active <% } %> >">
+                <a class="page-link" href="/comedy" <% if (active === 1) { %>disabled="disabled" <% } %>>1</a>
             </li>
-            <li class="page-item <% if (active === 2) { %>active <% } %>"><a class="page-link" href="/comedy/2">2</a>
+            <li class="page-item <% if (active === 2) { %>active <% } %>">
+                <a class="page-link" href="/comedy/2" <% if (active === 2) { %>disabled="disabled" <% } %>>2</a>
             </li>
-            <li class="page-item <% if (active === 3) { %>active <% } %>"><a class="page-link" href="/comedy/3">3</a>
+            <li class="page-item <% if (active === 3) { %>active <% } %>">
+                <a class="page-link" href="/comedy/3" <% if (active === 3) { %>disabled="disabled" <% } %>>3</a>
             </li>
-            <li class="page-item <% if (active === 4) { %>active <% } %>"><a class="page-link" href="/comedy/4">4</a>
+            <li class="page-item <% if (active === 4) { %>active <% } %>">
+                <a class="page-link" href="/comedy/4" <% if (active === 4) { %>disabled="disabled" <% } %>>4</a>
             </li>
-            <li class="page-item <% if (active === 5) { %>active <% } %>"><a class="page-link" href="/comedy/5">5</a>
+            <li class="page-item <% if (active === 5) { %>active <% } %>">
+                <a class="page-link" href="/comedy/5" <% if (active === 5) { %>disabled="disabled" <% } %>>5</a>
             </li>
         </ul>
     </nav>
@@ -33,6 +38,8 @@
     <div>
         <%- articleContent %>
     </div>
+
+    <%- include partials/scripts.ejs %>
 </div>
 </body>
 </html>
