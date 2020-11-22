@@ -312,7 +312,7 @@ function getCurLocale(req, res) {
         res.setLocale("ru");
     }
 
-    return i18n.getLocale(req);
+    return i18n.getLocale(res);
 }
 
 server.get('/comedy/:pageNum?/:lang?', function (req, res) {
