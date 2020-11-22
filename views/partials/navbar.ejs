@@ -86,15 +86,17 @@
     </div>
     <div class="justify-content-right ml-2">
         <strong>
-            <a href="/makeUa">
+            <a href="/makeUa" <% if(curLocale === 'ua') { %> disabled="disabled" <% } %>>
                 <img alt="ukr" src="https://cdn.countryflags.com/thumbs/ukraine/flag-button-square-250.png"
                      height="15px" width="15px"/>
             </a>
             &nbsp;&nbsp;
-            <a href="/makeRu">
+            <a href="/makeRu" <% if(curLocale === 'ru') { %> disabled="disabled" <% } %>>
                 <img alt="ru" src="https://cdn.countryflags.com/thumbs/russia/flag-button-square-250.png"
                      height="15px" width="15px"/>
             </a>
         </strong>
     </div>
 </nav>
+
+<%- include scripts.ejs %>
