@@ -241,12 +241,14 @@ server.get('/', function (req, res) {
             film.Title = film.TitleRu;
             film.Description = film.DescriptionRu;
         });
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === false).content);
         pageTitle = "Киноман – сервис подбора и рекомендаций фильмов, лучшее кино";
         metaDescription = "Сайт Киноман предоставляет удобный сервис подбора фильмов под настроение, по жанрам, по странам и рейтингу";
         res.render('index', {
             pageName: 'kinoman',
             pageTitle: pageTitle,
             metaDescription: metaDescription,
+            articleContent: articleContent,
             canonicalLink: null,
             films: response,
             curLocale: 'ru',
@@ -261,7 +263,9 @@ server.get('/ua', function (req, res) {
     getFilmsFromDb(6, null, null, null, null, function (response) {
         let pageTitle = "Кіноман - сервіс підбору та рекомендацій по фільмам";
         let metaDescription = "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам";
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === true).content);
         res.render('index', {
+            articleContent: articleContent,
             pageName: 'kinoman',
             pageTitle: pageTitle,
             metaDescription: metaDescription,
