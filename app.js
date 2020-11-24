@@ -135,6 +135,11 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
 }
 
 server.get('/makeua', function (req, res) {
+    if(req.headers.referer === undefined) {
+        res.redirect(302, "/");
+        return;
+    }
+
     if (i18n.getLocale(req) === 'ua') {
         res.redirect(req.headers.referer);
     } else {
@@ -154,6 +159,11 @@ server.get('/makeua', function (req, res) {
 });
 
 server.get('/makeru', function (req, res) {
+    if(req.headers.referer === undefined) {
+        res.redirect(302, "/");
+        return;
+    }
+
     if (i18n.getLocale(req) === 'ru') {
         res.redirect(req.headers.referer);
     } else {
