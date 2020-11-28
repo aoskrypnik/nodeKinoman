@@ -5,7 +5,7 @@
             <h1><%= movie.Title %></h1>
         </div>
         <div class="card-body row">
-            <div class="col-12 col-sm-4"><img class="img-fluid" alt="<%= movie.Title %>"
+            <div class="col-12 col-sm-4"><img class="img-fluid" loading="lazy" alt="<%= movie.Title %>"
                 <% if(movie.PosterImg !== undefined && movie.PosterImg.startsWith("http")) { %>
                                               src="<%= movie.PosterImg %>"/>
                 <% } else { %>
