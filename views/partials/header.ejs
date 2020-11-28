@@ -40,7 +40,7 @@
         alternateLink.rel = 'alternate';
         if(window.location.href.indexOf("/ru") > -1) {
             alternateLink.href = window.location.href.replace('/ru','');
-            alternateLink.hreflang = "ua"
+            alternateLink.hreflang = "uk"
         } else {
             let url = location.protocol + '//' + location.host + location.pathname;
             alternateLink.href = window.location.href.replace(url, url+'/ru');
