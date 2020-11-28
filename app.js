@@ -30,9 +30,9 @@ server.use(session({
     cookie: {maxAge: 60000}
 }));
 i18n.configure({
-    locales: ['ru', 'ua'],
+    locales: ['ua', 'ru'],
     directory: __dirname + '/locales',
-    defaultLocale: 'ru',
+    defaultLocale: 'ua',
     cookie: 'i18n'
 });
 server.use(i18n.init);
@@ -134,32 +134,8 @@ function getFilmsOnPage(pageName, page, searchQuery, genreCode, countryCode, cal
     }
 }
 
-server.get('/makeua', function (req, res) {
-    if(req.headers.referer === undefined) {
-        res.redirect(302, "/");
-        return;
-    }
-
-    if (i18n.getLocale(req) === 'ua') {
-        res.redirect(req.headers.referer);
-    } else {
-        res.cookie('i18n', 'ua');
-        res.setLocale("ua");
-        let referer = req.headers.referer;
-        if (referer.includes('?')) {
-            let index = referer.indexOf('?');
-            res.redirect(referer.substring(0, index) + '/ua' + referer.substring(index));
-        } else {
-            if (referer[referer.length - 1] === '/')
-                res.redirect(req.headers.referer + 'ua');
-            else
-                res.redirect(req.headers.referer + '/ua');
-        }
-    }
-});
-
 server.get('/makeru', function (req, res) {
-    if(req.headers.referer === undefined) {
+    if (req.headers.referer === undefined) {
         res.redirect(302, "/");
         return;
     }
@@ -170,9 +146,33 @@ server.get('/makeru', function (req, res) {
         res.cookie('i18n', 'ru');
         res.setLocale("ru");
         let referer = req.headers.referer;
+        if (referer.includes('?')) {
+            let index = referer.indexOf('?');
+            res.redirect(referer.substring(0, index) + '/ru' + referer.substring(index));
+        } else {
+            if (referer[referer.length - 1] === '/')
+                res.redirect(req.headers.referer + 'ru');
+            else
+                res.redirect(req.headers.referer + '/ru');
+        }
+    }
+});
 
-        if (referer.includes('/ua')) {
-            let index = referer.indexOf('/ua');
+server.get('/makeua', function (req, res) {
+    if (req.headers.referer === undefined) {
+        res.redirect(302, "/");
+        return;
+    }
+
+    if (i18n.getLocale(req) === 'ua') {
+        res.redirect(req.headers.referer);
+    } else {
+        res.cookie('i18n', 'ua');
+        res.setLocale("ua");
+        let referer = req.headers.referer;
+
+        if (referer.includes('/ru')) {
+            let index = referer.indexOf('/ru');
             res.redirect(referer.substring(0, index) + referer.substring(index + 3));
         } else {
             res.redirect(referer);
@@ -197,7 +197,8 @@ server.get('/movie/:lang?', function (req, res) {
                 pageTitle: undefined,
                 metaDescription: undefined,
                 curLocale: curLocale,
-                i18n: res
+                i18n: res,
+                target: undefined
             });
         }
 
@@ -235,7 +236,8 @@ server.get('/movie/:lang?', function (req, res) {
                                     studios: studiosRes,
                                     metaDescription: meta,
                                     curLocale: curLocale,
-                                    i18n: res
+                                    i18n: res,
+                                    target: undefined
                                 });
                             });
                     });
@@ -244,51 +246,57 @@ server.get('/movie/:lang?', function (req, res) {
 });
 
 server.get('/', function (req, res) {
-    res.cookie('i18n', 'ru');
-    res.setLocale("ru");
+    res.cookie('i18n', 'ua');
+    res.setLocale("ua");
     getFilmsFromDb(6, null, null, null, null, function (response) {
         response.forEach(film => {
             film.Title = film.TitleRu;
             film.Description = film.DescriptionRu;
         });
-        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === false).content);
-        pageTitle = "Киноман – сервис подбора и рекомендаций фильмов, лучшее кино";
-        metaDescription = "Сайт Киноман предоставляет удобный сервис подбора фильмов под настроение, по жанрам, по странам и рейтингу";
-        res.render('index', {
-            pageName: 'kinoman',
-            pageTitle: pageTitle,
-            metaDescription: metaDescription,
-            articleContent: articleContent,
-            canonicalLink: null,
-            films: response,
-            curLocale: 'ru',
-            i18n: res
-        });
-    });
-});
-
-server.get('/ua', function (req, res) {
-    res.cookie('i18n', 'ua');
-    res.setLocale("ua");
-    getFilmsFromDb(6, null, null, null, null, function (response) {
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === true).content);
         let pageTitle = "Кіноман - сервіс підбору та рекомендацій по фільмам";
         let metaDescription = "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам";
-        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === true).content);
         res.render('index', {
-            articleContent: articleContent,
             pageName: 'kinoman',
             pageTitle: pageTitle,
             metaDescription: metaDescription,
+            articleContent: articleContent,
             canonicalLink: null,
             films: response,
             curLocale: 'ua',
-            i18n: res
+            i18n: res,
+            target: undefined
         });
     });
 });
 
-server.get('/search', function (req, res) {
-    let curLocale = i18n.getLocale(req);
+server.get('/ru', function (req, res) {
+    res.cookie('i18n', 'ru');
+    res.setLocale("ru");
+    getFilmsFromDb(6, null, null, null, null, function (response) {
+        let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === false).content);
+        let pageTitle = "Киноман – сервис подбора и рекомендаций фильмов, лучшее кино";
+        let metaDescription = "Сайт Киноман предоставляет удобный сервис подбора фильмов под настроение, по жанрам, по странам и рейтингу";
+
+        res.render('index', {
+            articleContent: articleContent,
+            pageName: 'kinoman',
+            pageTitle: pageTitle,
+            metaDescription: metaDescription,
+            canonicalLink: null,
+            films: response,
+            curLocale: 'ru',
+            i18n: res,
+            target: undefined
+        });
+    });
+});
+
+server.get('/search/:lang?', function (req, res) {
+    let lang = req.params.lang;
+    if (lang !== undefined && lang === 'ru') {
+        res.locale = 'ru';
+    }
     getFilmsFromDb(100, req.query.filmName, null, null, res, function (response) {
         let pageTitle = 'Пошук фільму - швидкий і зручний підбір фільму за заданими параметрами';
         let metaDescription = 'Використайте алгоритм підбору фільмів сайту Кіноман та з легкістю підберіть фільм під ваш настрій та інші параметри';
@@ -308,22 +316,23 @@ server.get('/search', function (req, res) {
             canonicalLink: null,
             metaDescription: metaDescription,
             searchQuery: req.query.filmName,
-            curLocale: curLocale,
-            i18n: res
+            curLocale: res.locale,
+            i18n: res,
+            target: undefined
         });
     });
 });
 
 function getCurLocale(req, res) {
-    let lang = req.params.pageNum === 'ua' ? 'ua' : req.params.lang;
+    let lang = req.params.pageNum === 'ru' ? 'ru' : req.params.lang;
 
-    if (lang === 'ua' && i18n.getLocale(req) !== 'ua') {
-        res.cookie('i18n', 'ua');
-        res.setLocale("ua");
-    }
-    if ((lang === undefined || lang === null) && i18n.getLocale(req) !== 'ru') {
+    if (lang === 'ru' && i18n.getLocale(req) !== 'ru') {
         res.cookie('i18n', 'ru');
         res.setLocale("ru");
+    }
+    if ((lang === undefined || lang === null) && i18n.getLocale(req) !== 'ua') {
+        res.cookie('i18n', 'ua');
+        res.setLocale("ua");
     }
 
     return i18n.getLocale(res);
@@ -356,12 +365,13 @@ server.get('/comedy/:pageNum?/:lang?', function (req, res) {
             films: response.films,
             pageTitle: pageTitle,
             pageName: 'comedy',
-            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/comedy' + (curLocale === 'ru' ? '' : '/ua') : null,
+            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/comedy' + (curLocale === 'ua' ? '' : '/ru') : null,
             active: response.pageNumber + 1,
             metaDescription: metaDescription,
             curLocale: curLocale,
             linkName: 'comedy',
-            i18n: res
+            i18n: res,
+            target: undefined
         });
     });
 });
@@ -392,12 +402,13 @@ server.get('/romantic/:pageNum?/:lang?', function (req, res) {
             films: response.films,
             pageTitle: pageTitle,
             pageName: 'romantic',
-            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/romantic' + (curLocale === 'ru' ? '' : '/ua') : null,
+            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/romantic' + (curLocale === 'ua' ? '' : '/ru') : null,
             active: response.pageNumber + 1,
             metaDescription: metaDescription,
             curLocale: curLocale,
             linkName: 'romantic',
-            i18n: res
+            i18n: res,
+            target: undefined
         });
     });
 });
@@ -428,12 +439,13 @@ server.get('/thriller/:pageNum?/:lang?', function (req, res) {
             films: response.films,
             pageTitle: pageTitle,
             pageName: 'thriller',
-            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/thriller' + (curLocale === 'ru' ? '' : '/ua') : null,
+            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/thriller' + (curLocale === 'ua' ? '' : '/ru') : null,
             active: response.pageNumber + 1,
             metaDescription: metaDescription,
             curLocale: curLocale,
             linkName: 'thriller',
-            i18n: res
+            i18n: res,
+            target: undefined
         });
     });
 });
@@ -464,12 +476,13 @@ server.get('/ukrainian/:pageNum?/:lang?', function (req, res) {
             films: response.films,
             pageTitle: pageTitle,
             pageName: 'ukrainian',
-            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/ukrainian' + (curLocale === 'ru' ? '' : '/ua') : null,
+            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/ukrainian' + (curLocale === 'ua' ? '' : '/ru') : null,
             active: response.pageNumber + 1,
             metaDescription: metaDescription,
             curLocale: curLocale,
             linkName: 'ukrainian',
-            i18n: res
+            i18n: res,
+            target: undefined
         });
     });
 });
@@ -498,7 +511,8 @@ server.get('/zombie/:lang?', function (req, res) {
             curLocale: curLocale,
             canonicalLink: null,
             metaDescription: metaDescription,
-            i18n: res
+            i18n: res,
+            target: undefined
         });
     });
 });
@@ -529,12 +543,13 @@ server.get('/films/:pageNum?/:lang?', function (req, res) {
             films: response.films,
             pageTitle: pageTitle,
             pageName: 'films',
-            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/films' + (curLocale === 'ru' ? '' : '/ua') : null,
+            canonicalLink: response.pageNumber !== 0 ? 'https://' + req.get('host') + '/films' + (curLocale === 'ua' ? '' : '/ru') : null,
             active: response.pageNumber + 1,
             metaDescription: metaDescription,
             curLocale: curLocale,
             linkName: 'films',
-            i18n: res
+            i18n: res,
+            target: undefined
         });
     });
 });
@@ -588,7 +603,12 @@ server.get('/selection', function (req, res) {
                 film.Description = film.DescriptionRu;
             });
         }
-        res.render('partials/filmList', {films: results, i18n: res, curLocale: res.locale}, function (err, html) {
+        res.render('partials/filmList', {
+            films: results,
+            i18n: res,
+            curLocale: res.locale,
+            target: "_blank"
+        }, function (err, html) {
             if (err) {
                 return res.sendStatus(500);
             }
@@ -631,7 +651,8 @@ server.get('/selection/form/:lang?', function (req, res) {
                 genres: genres,
                 moods: moods,
                 curLocale: curLocale,
-                i18n: res
+                i18n: res,
+                target: undefined
             });
         });
     });

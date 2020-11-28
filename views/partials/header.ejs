@@ -38,13 +38,13 @@
     <script>
         alternateLink = document.createElement('link');
         alternateLink.rel = 'alternate';
-        if(window.location.href.indexOf("/ua") > -1) {
-            alternateLink.href = window.location.href.replace('/ua','');
-            alternateLink.hreflang = "ru"
+        if(window.location.href.indexOf("/ru") > -1) {
+            alternateLink.href = window.location.href.replace('/ru','');
+            alternateLink.hreflang = "ua"
         } else {
             let url = location.protocol + '//' + location.host + location.pathname;
-            alternateLink.href = window.location.href.replace(url, url+'/ua');
-            alternateLink.hreflang = "uk"
+            alternateLink.href = window.location.href.replace(url, url+'/ru');
+            alternateLink.hreflang = "ru"
         }
         document.getElementsByTagName('head')[0].appendChild(alternateLink);
     </script>
