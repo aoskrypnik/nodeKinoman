@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="<% if(curLocale === 'ua') { %>uk<% } else{%>ru<%}%>">
 <head>
     <!-- Google Tag Manager -->
     <script>(function (w, d, s, l, i) {
@@ -24,6 +24,9 @@
     <% } else { %>
         <title><%= i18n.__("Kinoman") %></title>
     <% } %>
+
+    <link data-n-head="ssr" rel="icon" type="image/x-icon" href="/favicon.ico">
+
     <% if (metaDescription !== undefined && metaDescription !== null) { %>
         <meta name="description" content="<%= metaDescription %>">
     <% } else { %>

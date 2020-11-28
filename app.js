@@ -226,11 +226,16 @@ server.get('/movie/:lang?', function (req, res) {
                                     movie.Title = movie.TitleRu;
                                     movie.Description = movie.DescriptionRu;
                                 }
+                                // Title between 50-70
+                                let title = movie === undefined ? ('not found ' + id) : filmRes[0].Title;
+                                if(movie !== undefined && title.length < 50) {
+                                    title += " - " + movie.Description.replace(/<\/?[^>]+(>|$)/g, "").replace('&nbsp;', "").substr(0, 50 - title.length);
+                                }
                                 res.render('movie', {
                                     pageName: 'movie',
                                     canonicalLink: null,
                                     movie: movie,
-                                    pageTitle: filmRes[0] === undefined ? ('not found ' + id) : filmRes[0].Title,
+                                    pageTitle: title,
                                     genres: genresRes,
                                     countries: countriesRes,
                                     studios: studiosRes,
