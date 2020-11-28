@@ -29,5 +29,6 @@
   "Country": "Страна",
   "Genre": "Жанр",
   "Minutes": "(мин)",
-  "NotChosen": "не выбрано"
+  "NotChosen": "не выбрано",
+  "ChooseFilm": "Выберите фильм"
 }
