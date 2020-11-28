@@ -43,6 +43,7 @@ server.use(express.static(__dirname + "/public"));
 const FILMS_PER_PAGE = 6;
 const FILMS_AMOUNT = 47946;
 const moods = [{Name: 'Хороший'}, {Name: 'Поганий'}, {Name: 'Нормальний'}];
+const moodsRu = [{Name: 'Хорошее'}, {Name: 'Плохое'}, {Name: 'Нормальное'}];
 
 const movieArticles = [];
 client.getEntries()
@@ -254,10 +255,6 @@ server.get('/', function (req, res) {
     res.cookie('i18n', 'ua');
     res.setLocale("ua");
     getFilmsFromDb(6, null, null, null, null, function (response) {
-        response.forEach(film => {
-            film.Title = film.TitleRu;
-            film.Description = film.DescriptionRu;
-        });
         let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === true).content);
         let pageTitle = "Кіноман - сервіс підбору та рекомендацій по фільмам";
         let metaDescription = "Сайт Кіноман надає зручний сервіс підбору фільмів під настрій та за іншими параметрами, а також загальні підбірки фільмів по жанрам";
@@ -279,6 +276,10 @@ server.get('/ru', function (req, res) {
     res.cookie('i18n', 'ru');
     res.setLocale("ru");
     getFilmsFromDb(6, null, null, null, null, function (response) {
+        response.forEach(film => {
+            film.Title = film.TitleRu;
+            film.Description = film.DescriptionRu;
+        });
         let articleContent = html_renderer.documentToHtmlString(movieArticles.find(article => article.genre === 99 && article.isUkrainian === false).content);
         let pageTitle = "Киноман – сервис подбора и рекомендаций фильмов, лучшее кино";
         let metaDescription = "Сайт Киноман предоставляет удобный сервис подбора фильмов под настроение, по жанрам, по странам и рейтингу";
@@ -641,11 +642,13 @@ server.get('/selection/form/:lang?', function (req, res) {
         genresPromise.then(function (genres) {
             let pageTitle = 'Пошук фільму - швидкий і зручний підбір фільму за заданими параметрами';
             let metaDescription = 'Використайте алгоритм підбору фільмів сайту Кіноман та з легкістю підберіть фільм під ваш настрій та інші параметри';
+            let curMoods = moods;
             if (curLocale === 'ru') {
                 genres.forEach(genre => genre.Name = genre.NameRu);
                 countries.forEach(country => country.Name = country.NameRu);
                 pageTitle = 'Поиск фильма – быстрый и удобный подбор фильмов за параметрами';
                 metaDescription = 'Используйте алгоритм подбора фильмов сайта Киноман и с легкостью выберите фильм под ваше настроение';
+                curMoods = moodsRu;
             }
             res.render('selection', {
                 pageName: 'selection',
@@ -654,7 +657,7 @@ server.get('/selection/form/:lang?', function (req, res) {
                 canonicalLink: null,
                 countries: countries,
                 genres: genres,
-                moods: moods,
+                moods: curMoods,
                 curLocale: curLocale,
                 i18n: res,
                 target: undefined
