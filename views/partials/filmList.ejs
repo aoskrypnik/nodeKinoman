@@ -7,7 +7,7 @@
                 </div>
                 <div class="card-body">
                     <div class="mx-auto mb-4" style="width: 100%; max-width: 150px; height: 225px">
-                        <img class="img-fluid" alt="<%= films[i].Title %>" style="object-fit: cover"
+                        <img class="img-fluid" alt="<%= films[i].Title %>" style="object-fit: cover" loading="lazy"
                         <% if (films[i].PosterImg !== undefined && films[i].PosterImg.startsWith("http")) { %>
                              src="<%= films[i].PosterImg %>"/>
                         <% } else { %>
